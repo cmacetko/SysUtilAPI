@@ -17,6 +17,12 @@ var dns = require('native-dns');
 var Screenshot = require("node-server-screenshot");
 var ObjPix = require('faz-um-pix');
 var imagemagick = require('imagemagick');
+var Leite = require('leite')
+var QRCode = require('qrcode')
+var SitemapGenerator = require('sitemap-generator');
+var sinespApi = require('sinesp-api');
+var CNPJ = require('consulta-cnpj-ws');
+var checkSslCertificate = require('checkSslCertificate').default
 
 var express = require("express");
 var bodyParser = require("body-parser");
@@ -628,9 +634,9 @@ app.post("/whois", function(req, res){
 
         start = process.hrtime(); 
 
-        try {
+        (async function(){
 
-            (async function(){
+            try {
 
                 var results = await whois(req.body.url);
 
@@ -641,16 +647,16 @@ app.post("/whois", function(req, res){
                                     "Consulta": results
                                     });
 
-            })();
-
-        } catch (ex) {
+            } catch (ex) {
+                
+                log.warn("Falha no Whois");
+                log.warn(ex);
             
-            log.warn("Falha no Whois");
-            log.warn(ex);
-        
-            sendRes(res, false, {"Msg": "Falha no Tracert"});
-        
-        }
+                sendRes(res, false, {"Msg": "Falha no Tracert"});
+            
+            }
+
+        })();
 
 	}else{
 
@@ -936,9 +942,9 @@ app.post("/pix_codigo", function(req, res){
 
         start = process.hrtime(); 
 
-        try {
+        (async function(){
 
-            (async function(){
+            try {
 
                 var code = await ObjPix.Pix(req.body.chave, req.body.nome, req.body.cidade, req.body.valor, "")
 
@@ -946,16 +952,16 @@ app.post("/pix_codigo", function(req, res){
 
                 sendRes(res, true, {"Codigo": code, "Duracao": TempoDuracao});
 
-            })();
-
-        } catch (ex) {
+            } catch (ex) {
+                
+                log.warn("Falha no Gerar PIX");
+                log.warn(ex);
             
-            log.warn("Falha no Gerar PIX");
-            log.warn(ex);
-        
-            sendRes(res, false, {"Msg": "Falha no Gerar PIX"});
-        
-        }
+                sendRes(res, false, {"Msg": "Falha no Gerar PIX"});
+            
+            }
+
+        })();
 
 	}else{
 
@@ -991,9 +997,9 @@ app.post("/pix_qrcode", function(req, res){
 
         start = process.hrtime(); 
 
-        try {
+        (async function(){
 
-            (async function(){
+            try {
 
                 var code = await ObjPix.Pix(req.body.chave, req.body.nome, req.body.cidade, req.body.valor, "", true)
 
@@ -1001,16 +1007,15 @@ app.post("/pix_qrcode", function(req, res){
 
                 sendRes(res, true, {"Imagem": code, "Duracao": TempoDuracao});
 
-            })();
-
-        } catch (ex) {
+            } catch (ex) {
+                
+                log.warn("Falha no Gerar PIX");
+                log.warn(ex);
             
-            log.warn("Falha no Gerar PIX");
-            log.warn(ex);
-        
-            sendRes(res, false, {"Msg": "Falha no Gerar PIX"});
-        
-        }
+                sendRes(res, false, {"Msg": "Falha no Gerar PIX"});
+            
+            }
+        })();
 
 	}else{
 
@@ -1167,6 +1172,383 @@ app.post("/otimizar_imagem", function(req, res){
         
             sendRes(res, false, {"Msg": "Extencao nao Permitida"});
 
+        }
+
+	}else{
+
+        log.warn("Url nao informada");
+    
+		sendRes(res, false, {"Msg": "Url nao informada"});
+
+	}
+
+});
+
+app.post("/gerar_dadospessoa", function(req, res){
+
+    log.info("-------------------------------------");
+    log.info("Funcao: gerar_dadospessoa");        
+    log.info("Usuario: " + req.auth.user);
+    log.info("Link: " + req.body.url);
+    log.info(req.body);
+
+    console.log("-------------------------------------");
+    console.log("Funcao: gerar_dadospessoa");        
+    console.log("Usuario: " + req.auth.user);
+
+    try {
+
+        var leite = new Leite()
+
+        sendRes(res, true,  {
+                            "Nome": leite.pessoa.nome(),
+                            "CPF": leite.pessoa.cpf({ formatado: true }),
+                            "RG": leite.pessoa.rg(),
+                            "CNPJ": leite.empresa.cnpj({ formatado: false }),
+                            "Email": leite.pessoa.email(),
+                            "Usuario": leite.pessoa.usuario(),
+                            "Idade": leite.pessoa.idade(),
+                            "DataNascimento": leite.pessoa.nascimento({ formato: 'DD/MM/YYYY' }),
+                            "Sexo": leite.pessoa.sexo(),
+                            "Endereco": {
+                                "CEP": leite.localizacao.cep(),
+                                "Estado": leite.localizacao.estado(),
+                                "Cidade": leite.localizacao.cidade(),
+                                "Bairro": leite.localizacao.bairro(),
+                                "Logradouro": leite.localizacao.logradouro(),
+                                "Complemento": leite.localizacao.complemento(),
+                            },
+                            "Veiculo": {
+                                "Tipo": leite.veiculo.tipo(),
+                                "Marca": leite.veiculo.marca(),
+                                "Modelo": leite.veiculo.modelo(),
+                                "Especie": leite.veiculo.especie(),
+                                "Categoria": leite.veiculo.categoria(),
+                                "Placa": leite.veiculo.placa(),
+                                "Combustivel": leite.veiculo.combustivel(),
+                                "Carroceria": leite.veiculo.carroceria(),
+                                "Restricao": leite.veiculo.restricao()
+                            },
+                            "CNH": {
+                                "Numero": leite.cnh.numero(),
+                                "Categoria": leite.cnh.categoria(),
+                                "DataEmissao": leite.cnh.emissao(),
+                                "DataValidade": leite.cnh.validade(),
+                                "NumeroRegistro": leite.cnh.registro(),
+                                "NumerSeguranca": leite.cnh.seguranca(),
+                            }
+                            });
+
+    } catch (ex) {
+        
+        log.warn("Falha no Gerar Dados");
+        log.warn(ex);
+    
+        sendRes(res, false, {"Msg": "Falha no Gerar Dados"});
+    
+    }
+
+});
+
+app.post("/qrcode", function(req, res){
+
+    if( req.body.texto != "" ) 
+	{
+
+        log.info("-------------------------------------");
+        log.info("Funcao: qrcode");        
+        log.info("Usuario: " + req.auth.user);
+        log.info("Texto: " + req.body.texto);
+        log.info(req.body);
+
+        console.log("-------------------------------------");
+        console.log("Funcao: qrcode");        
+        console.log("Usuario: " + req.auth.user);
+        console.log("Texto: " + req.body.texto);
+    
+        start = process.hrtime(); 
+
+        try {
+
+            QRCode.toDataURL(req.body.texto, function (err, url) {
+            
+                if(err) 
+                {
+                    
+                    log.error("Falha no Gerar QRCode");
+                    log.error(err);
+
+                    sendRes(res, false, {"Msg": "Falha no Gerar QRCode"});
+
+                }else{
+                    
+                    var TempoDuracao = elapsed_time();
+
+                    sendRes(res, true, {"Imagem": url, "Duracao": TempoDuracao});
+
+                }
+
+            })
+
+        } catch (ex) {
+            
+            log.warn("Falha no Gerar QRCode");
+            log.warn(ex);
+        
+            sendRes(res, false, {"Msg": "Falha no Gerar QRCode"});
+        
+        }
+
+	}else{
+
+        log.warn("Texto nao informado");
+    
+		sendRes(res, false, {"Msg": "Texto nao informado"});
+
+	}
+
+});
+
+app.post("/sitemap", function(req, res){
+
+    if(req.body.url) 
+	{
+
+        log.info("-------------------------------------");
+        log.info("Funcao: sitemap");        
+        log.info("Usuario: " + req.auth.user);
+        log.info("Link: " + req.body.url);
+        log.info(req.body);
+
+        console.log("-------------------------------------");
+        console.log("Funcao: sitemap");        
+        console.log("Usuario: " + req.auth.user);
+        console.log("Link: " + req.body.url);
+    
+        start = process.hrtime(); 
+
+        var filenamepre = uuid();
+        var filename = filenamepre + ".xml";
+        var output = __dirname + "/tmp/" + filename;
+
+        try {
+
+            var generator = SitemapGenerator(req.body.url, {
+                stripQuerystring: false,
+                ignoreHreflang: true,
+                filepath: output,
+                maxDepth: 0
+            });
+            
+            generator.on('done', () => {
+                
+                fs.readFile(output, {encoding: 'base64'}, function (err, data) {
+
+                    if(err) 
+                    {
+                        
+                        log.error("readFile | error");
+                        log.error(err);
+
+                        remover_arquivo(output);
+                        sendRes(res, false, {"Msg": "Falha em ler Raw"});
+
+                    }else{
+                        
+                        var TempoDuracao = elapsed_time();
+
+                        remover_arquivo(output);
+
+                        sendRes(res, true, {"XML": data.toString(), "Duracao": TempoDuracao});
+
+                    }
+
+                });
+
+            });
+            
+            generator.start();
+
+        } catch (ex) {
+            
+            log.warn("Falha em Gerar o Sitemap");
+            log.warn(ex);
+        
+            sendRes(res, false, {"Msg": "Falha em Gerar o Sitemap"});
+        
+        }
+
+	}else{
+
+        log.warn("Url nao informada");
+    
+		sendRes(res, false, {"Msg": "Url nao informada"});
+
+	}
+
+});
+
+app.post("/consultar_placa", function(req, res){
+
+    if( req.body.placa != "" ) 
+	{
+
+        log.info("-------------------------------------");
+        log.info("Funcao: consultar_placa");        
+        log.info("Usuario: " + req.auth.user);
+        log.info("Placa: " + req.body.placa);
+        log.info(req.body);
+
+        console.log("-------------------------------------");
+        console.log("Funcao: consultar_placa");        
+        console.log("Usuario: " + req.auth.user);
+        console.log("Placa: " + req.body.placa);
+    
+        start = process.hrtime(); 
+
+        (async function(){
+
+            try {
+
+                var vehicle = await sinespApi.search(req.body.placa);
+                var TempoDuracao = elapsed_time();
+    
+                sendRes(res, true, {
+                                    "Duracao": TempoDuracao,
+                                    "Consulta": vehicle
+                                    });
+
+            } catch (ex) {
+                
+                log.warn("Falha em Obter Detalhes");
+                log.warn(ex);
+            
+                sendRes(res, false, {"Msg": "Falha em Obter Detalhes"});
+            
+            }
+
+        })();
+
+	}else{
+
+        log.warn("Placa nao informada");
+    
+		sendRes(res, false, {"Msg": "Placa nao informada"});
+
+	}
+
+});
+
+app.post("/consultar_cnpj", function(req, res){
+
+    if( req.body.cnpj != "" ) 
+	{
+
+        log.info("-------------------------------------");
+        log.info("Funcao: consultar_cnpj");        
+        log.info("Usuario: " + req.auth.user);
+        log.info("CNPJ: " + req.body.cnpj);
+        log.info(req.body);
+
+        console.log("-------------------------------------");
+        console.log("Funcao: consultar_cnpj");        
+        console.log("Usuario: " + req.auth.user);
+        console.log("CNPJ: " + req.body.cnpj);
+    
+        start = process.hrtime(); 
+
+        try {
+
+            let cnpj = new CNPJ();
+ 
+            cnpj.consultaCNPJ({cnpj: req.body.cnpj })
+            .then(result => {
+                
+                var TempoDuracao = elapsed_time();
+
+                sendRes(res, true, {
+                                    "Duracao": TempoDuracao,
+                                    "Consulta": result
+                                    });
+                                    
+            })
+            .catch(error => {
+                
+                log.warn("Falha em Obter Detalhes");
+                log.warn(error);
+            
+                if( error.message != undefined )
+                {
+
+                    sendRes(res, false, {"Msg": error.message});
+
+                }else{
+
+                    sendRes(res, false, {"Msg": "Falha em Obter Detalhes"});
+
+                }
+                
+            })
+
+        } catch (ex) {
+            
+            log.warn("Falha em Obter Detalhes");
+            log.warn(ex);
+        
+            sendRes(res, false, {"Msg": "Falha em Obter Detalhes"});
+        
+        }
+
+	}else{
+
+        log.warn("CNPJ nao informado");
+    
+		sendRes(res, false, {"Msg": "CNPJ nao informado"});
+
+	}
+
+});
+
+app.post("/consultar_ssl", function(req, res){
+
+    if(req.body.url) 
+	{
+
+        log.info("-------------------------------------");
+        log.info("Funcao: consultar_ssl");        
+        log.info("Usuario: " + req.auth.user);
+        log.info("Link: " + req.body.url);
+        log.info(req.body);
+
+        console.log("-------------------------------------");
+        console.log("Funcao: consultar_ssl");        
+        console.log("Usuario: " + req.auth.user);
+        console.log("Link: " + req.body.url);
+    
+        start = process.hrtime(); 
+
+        try {
+
+            checkSslCertificate({hostname: req.body.url}).then(res2 => {
+            
+                var TempoDuracao = elapsed_time();
+
+                sendRes(res, true, {
+                                    "Duracao": TempoDuracao,
+                                    "Consulta": res2
+                                    });
+
+            });
+
+        } catch (ex) {
+            
+            log.warn("Falha em Obter Detalhes");
+            log.warn(ex);
+        
+            console.log(ex);
+
+            sendRes(res, false, {"Msg": "Falha em Obter Detalhes"});
+        
         }
 
 	}else{

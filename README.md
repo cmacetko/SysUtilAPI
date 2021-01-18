@@ -498,3 +498,225 @@ otimizar_imagem
 }
 }
 ```
+
+## Gerar Dados Aleatórios de Pessoa/Localização/Veículo/CNH
+
+**Método:**
+gerar_dadospessoa
+
+**Retorno:**
+```json
+{
+"httpcode": 200,
+"body":{
+"Nome": "Alana Olerdatter",
+"CPF": "726.117.769-54",
+"RG": "19.858.350-9",
+"CNPJ": "49545744000180",
+"Email": "gabrielaguarnier@gmail.com",
+"Usuario": "evabrusque",
+"Idade": 20,
+"DataNascimento": "11/01/1980",
+"Sexo": "Feminino",
+"Endereco":{
+"CEP": "72995207",
+"Estado": "MT",
+"Cidade": "Santa Isabel do Rio Negro",
+"Bairro": "Itaim Bibi",
+"Logradouro": "Avenida Santos Dumont",
+"Complemento": "Terreo"
+},
+"Veiculo":{
+"Tipo": "MOTOCICLO",
+"Marca": "VW - VolksWagen",
+"Modelo": "Tempra SX 2.0 16V 4p",
+"Especie": "TRAÇÃO",
+"Categoria": "PARTICULAR",
+"Placa": "ABCDEFGHIJKLMNOPQRSTUVXZ8376",
+"Combustivel": "GÁS METANO",
+"Carroceria": "BASCULANTE",
+"Restricao": "RESTRIÇÃO POR BENEF. TRIBUTÁRIO"
+},
+"CNH":{
+"Numero": "859584875558",
+"Categoria": "ACC",
+"DataEmissao": "1969-11-06T16:09:20.098Z",
+"DataValidade": "2022-09-04T16:09:20.099Z",
+"NumeroRegistro": "10444002389",
+"NumerSeguranca": "40967018583"
+}
+}
+}
+```
+
+## Gerar QRCode
+
+**Método:**
+qrcode
+
+**Exemplo:**
+```json
+{
+  "texto": "Teste123"
+}
+```
+
+**Retorno:**
+```json
+{
+"httpcode": 200,
+"body":{
+"Imagem": "XXXXXX",
+"Duracao": "0s 85.0892000000ms"
+}
+}
+```
+
+## Gerar Sitemap
+
+**Método:**
+sitemap
+
+**Exemplo:**
+```json
+{
+  "url": "https://www.site.com.br/"
+}
+```
+
+**Retorno:**
+```json
+{
+"httpcode": 200,
+"body":{
+"XML": "xxxx",
+"Duracao": "19s 508.4140000000ms"
+}
+}
+```
+
+## Consultar Placa de Veículos
+
+**Método:**
+consultar_placa
+
+**Exemplo:**
+```json
+{
+  "placa": "QMQ5140"
+}
+```
+
+**Retorno:**
+```json
+{
+"httpcode": 200,
+"body":{
+"Duracao": "0s 983.7526000000ms",
+"Consulta":{
+"ano": "2018",
+"anoModelo": "2018",
+"chassi": "*****31517",
+"codigoRetorno": "0",
+"codigoSituacao": "0",
+"cor": "Preta",
+"data": "2021-01-18T09:50:07.013-03:00",
+"dataAtualizacaoAlarme": "",
+"dataAtualizacaoCaracteristicasVeiculo": "",
+"dataAtualizacaoRouboFurto": "",
+"marca": "JEEP/COMPASS LIMITED D",
+"mensagemRetorno": "Sem erros.",
+"modelo": "JEEP/COMPASS LIMITED D",
+"municipio": "Belo Horizonte",
+"placa": "QMQ5140",
+"situacao": "Sem restrição",
+"uf": "MG"
+}
+}
+}
+
+```
+
+## Consultar CNPJ
+
+**Método:**
+consultar_cnpj
+
+**Exemplo:**
+```json
+{
+  "cnpj": "06990590000123"
+}
+```
+
+**Retorno:**
+```json
+{
+"httpcode": 200,
+"body":{
+"Duracao": "0s 515.5405000000ms",
+"Consulta":{
+"atividade_principal":[{"text": "Portais, provedores de conteúdo e outros serviços de informação na internet", "code": "63.19-4-00" }…],
+"data_situacao": "01/09/2004",
+"complemento": "ANDAR 17 A 20 TORRE SUL ANDAR 2 TORRE NORTE ANDAR 18 A 20 TORRE NORTE",
+"tipo": "MATRIZ",
+"nome": "GOOGLE BRASIL INTERNET LTDA.",
+"uf": "SP",
+"telefone": "(11) 2395-8400",
+"email": "googlebrasil@google.com",
+"atividades_secundarias":[{"text": "Consultoria em publicidade", "code": "73.19-0-04" }, {"text": "Comércio varejista especializado de equipamentos e suprimentos de informática",…],
+"qsa":[{"qual": "37-Sócio Pessoa Jurídica Domiciliado no Exterior", "pais_origem": "ESTADOS UNIDOS", "nome_rep_legal": "YUN KI LEE",…],
+"situacao": "ATIVA",
+"bairro": "ITAIM BIBI",
+"logradouro": "AV BRIGADEIRO FARIA LIMA",
+"numero": "3477",
+"cep": "04.538-133",
+"municipio": "SAO PAULO",
+"porte": "DEMAIS",
+"abertura": "01/09/2004",
+"natureza_juridica": "206-2 - Sociedade Empresária Limitada",
+"cnpj": "06.990.590/0001-23",
+"ultima_atualizacao": "2021-01-11T18:32:58.228Z",
+"status": "OK",
+"fantasia": "",
+"efr": "",
+"motivo_situacao": "",
+"situacao_especial": "",
+"data_situacao_especial": "",
+"capital_social": "56758501.00",
+"extra":{},
+"billing":{"free": true, "database": true}
+}
+}
+}
+```
+
+## Verificar Expiração de SSL
+
+**Método:**
+consultar_ssl
+
+**Exemplo:**
+```json
+{
+  "url": "www.google.com.br"
+}
+```
+
+**Retorno:**
+```json
+{
+"httpcode": 200,
+"body":{
+"Duracao": "0s 238.0882000000ms",
+"Consulta":{
+"valid": true,
+"validFrom": "Dec 15 14:51:26 2020 GMT",
+"validUntil": "Mar  9 14:51:25 2021 GMT",
+"originalObject":{
+"hostname": "www.google.com.br"
+}
+}
+}
+}
+```

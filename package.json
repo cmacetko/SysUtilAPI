@@ -2,8 +2,19 @@
   "name": "sysutilapi",
   "version": "1.0.1",
   "description": "",
-  "main": "index.js",
   "author": "Paloma Macetko <cmacetko@gmail.com>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "homepage": "https://github.com/cmacetko/sysutilapi",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cmacetko/sysutilapi"
+  },
+  "bugs": {
+    "url": "https://github.com/cmacetko/sysutilapi/issues"
+  },
   "dependencies": {
     "async": "^3.2.0",
     "express": "^4.17.1",

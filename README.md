@@ -1,25 +1,25 @@
 # SysUtilAPI
 
-SysUtilAPI È uma API, que roda em Nodejs e combina v·rias ferramentas diferentes ˙teis.
+SysUtilAPI √© uma API, que roda em Nodejs e combina v√°rias ferramentas diferentes √∫teis.
 
 ## Porta
 
-A aplicaÁ„o roda na porta **9091** porÈm pode ser alterado na vari·vel **cfg_porta**
+A aplica√ß√£o roda na porta **9091** por√©m pode ser alterado na vari√°vel **cfg_porta**
 
-## AutenticaÁ„o
+## Autentica√ß√£o
 
-O acesso a api È feito utilizando **autenticaÁ„o b·sica HTTP** *(Basic Auth)*, e os usu·rios/senha s„o controlados na vari·vel **cfg_usuarios**
+O acesso a api √© feito utilizando **autentica√ß√£o b√°sica HTTP** *(Basic Auth)*, e os usu√°rios/senha s√£o controlados na vari√°vel **cfg_usuarios**
 
-## MÈtodo
+## M√©todo
 
-Toda chamada a API È feita via **POST** enviando no corpo da solicitaÁ„o o JSON com os par‚metros
+Toda chamada a API √© feita via **POST** enviando no corpo da solicita√ß√£o o JSON com os par√¢metros
 
 ## Sucesso
 
-Em caso de sucesso, ser· retornado um json com dois valores:
+Em caso de sucesso, ser√° retornado um json com dois valores:
 
 - **httpcode:** 200
-- **body:** Json com o resultado da requisiÁ„o
+- **body:** Json com o resultado da requisi√ß√£o
 
 **Exemplo:**
 ```json
@@ -32,7 +32,7 @@ Em caso de sucesso, ser· retornado um json com dois valores:
 
 ## Erro
 
-Em caso de erro, ser· retornado um json com dois valores:
+Em caso de erro, ser√° retornado um json com dois valores:
 
 - **httpcode:** 500
 - **body/Msg:** Mensagem de erro
@@ -49,18 +49,18 @@ Em caso de erro, ser· retornado um json com dois valores:
 
 ## Requisitos
 
-Para o funcionamento deste mÈtodo È necess·rio instalar alguns programas:
+Para o funcionamento deste m√©todo √© necess√°rio instalar alguns programas:
 - https://wkhtmltopdf.org/downloads.html
 - https://download.imagemagick.org/ImageMagick/download/binaries/ImageMagick-7.0.10-56-Q16-HDRI-x64-dll.exe
 - https://www.ghostscript.com/download/gsdnld.html
 - http://www.graphicsmagick.org/download.html
 - https://dl.xpdfreader.com/xpdf-tools-win-4.02.zip
 
-# MÈtodos
+# M√©todos
 
-## Conversor de P·gina HTML para Arquivo PDF
+## Conversor de P√°gina HTML para Arquivo PDF
 
-**MÈtodo:** 
+**M√©todo:** 
 url_to_pdf
 
 **Exemplo:**
@@ -95,7 +95,7 @@ url_to_pdf
 
 ## Conversor de PDF em JPG
 
-**MÈtodo:**
+**M√©todo:**
 pdf_to_jpg
 
 **Exemplo:**
@@ -132,7 +132,7 @@ pdf_to_jpg
  
 ## OCR (Transforma Imagem em Texto Livre)
 
-**MÈtodo:**
+**M√©todo:**
 ocr
 
 **Exemplo:**
@@ -158,7 +158,7 @@ ocr
 
 ## Ping
 
-**MÈtodo:**
+**M√©todo:**
 ping
 
 **Exemplo:**
@@ -187,7 +187,7 @@ ping
 
 ## Tracert
 
-**MÈtodo:**
+**M√©todo:**
 tracert
 
 **Exemplo:**
@@ -265,9 +265,9 @@ tracert
 }
 ```
 
-## Whois (ObtÍm dados de um domÌnio)
+## Whois (Obt√™m dados de um dom√≠nio)
 
-**MÈtodo:**
+**M√©todo:**
 whois
 
 **Exemplo:**
@@ -317,9 +317,9 @@ whois
 }
 ```
 
-## Geoip (Identifica o endereÁo relacionado a um IP)
+## Geoip (Identifica o endere√ßo relacionado a um IP)
 
-**MÈtodo:**
+**M√©todo:**
 geoip
 
 **Exemplo:**
@@ -358,7 +358,7 @@ geoip
 
 ## Nslookup
 
-**MÈtodo:**
+**M√©todo:**
 nslookup
 
 **Exemplo:**
@@ -390,7 +390,7 @@ nslookup
 
 ## Tira um Screenshot de um Site
 
-**MÈtodo:**
+**M√©todo:**
 website_screenshot
 
 **Exemplo:**
@@ -414,9 +414,9 @@ website_screenshot
 }
 ```
 
-## PIX - Gera o cÛdigo para pagamento
+## PIX - Gera o c√≥digo para pagamento
 
-MÈtodo:
+M√©todo:
 pix_codigo
 
 **Exemplo:**
@@ -442,7 +442,7 @@ pix_codigo
 
 ## PIX - Gera o QRCode para pagamento
 
-**MÈtodo:**
+**M√©todo:**
 pix_qrcode
 
 **Exemplo:**
@@ -468,7 +468,7 @@ pix_qrcode
 
 ## Otimizar imagem reduzindo seu tamanho
 
-**MÈtodo:**
+**M√©todo:**
 otimizar_imagem
 
 **Exemplo:**

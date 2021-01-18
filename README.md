@@ -1,6 +1,12 @@
 # SysUtilAPI
 
-SysUtilAPI é uma API, que roda em Nodejs e combina várias ferramentas diferentes úteis.
+>  SysUtilAPI é uma API, que roda em Nodejs e combina várias ferramentas diferentes úteis.
+
+![Language](https://img.shields.io/badge/language-nodejs-orange)
+![Platforms](https://img.shields.io/badge/platforms-Windows%2C%20macOS%20and%20Linux-blue)
+![License](https://img.shields.io/github/license/cmacetko/sysutilapi)
+[![Packagist Downloads](https://img.shields.io/packagist/dm/cmacetko/sysutilapi)](https://packagist.org/packages/cmacetko/sysutilapi)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cmacetko/sysutilapi/Tests/main)](https://github.com/cmacetko/sysutilapi/actions)
 
 ## Porta
 

@@ -5,6 +5,7 @@
 ![Language](https://img.shields.io/badge/language-nodejs-orange)
 ![Platforms](https://img.shields.io/badge/platforms-Windows%2C%20macOS%20and%20Linux-blue)
 ![License](https://img.shields.io/github/license/cmacetko/sysutilapi)
+[![HitCount](http://hits.dwyl.com/cmacetko/sysutilapi.svg)](http://hits.dwyl.com/cmacetko/sysutilapi)
 
 ## Porta
 
@@ -718,3 +719,16 @@ consultar_ssl
 }
 }
 ```
+
+# Contato
+
+**Paloma Macetko**
+- cmacetko@gmail.com
+- https://github.com/cmacetko/
+- https://www.npmjs.com/~cmacetko
+- https://cmacetko.medium.com
+- https://www.facebook.com/cmacetko
+- https://www.instagram.com/cmacetko/
+- https://twitter.com/cmacetko
+- [Skype: cmacetko](skype:cmacetko "cmacetko")
+- [Whatsapp: 47-91277858](https://wa.me/554791277858 "Whatsapp: 47-91277858")

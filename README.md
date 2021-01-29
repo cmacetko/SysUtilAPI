@@ -720,6 +720,30 @@ consultar_ssl
 }
 ```
 
+## Verificar o Tamanho Total de uma Pasta
+
+**Método:**
+pasta_tamanho
+
+**Exemplo:**
+```json
+{
+  "pasta": "G:\\WDownloads"
+}
+```
+
+**Retorno:**
+```json
+{
+"httpcode": 200,
+"body":{
+"Duracao": "0s 5.8688000000ms",
+"Tamanho": 15985296,
+"Tamanho2": "15 MB"
+}
+}
+```
+
 # Contato
 
 **Paloma Macetko**

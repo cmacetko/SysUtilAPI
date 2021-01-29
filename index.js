@@ -23,6 +23,7 @@ var SitemapGenerator = require('sitemap-generator');
 var sinespApi = require('sinesp-api');
 var CNPJ = require('consulta-cnpj-ws');
 var checkSslCertificate = require('checkSslCertificate').default
+var getSize = require('get-folder-size');
 
 var express = require("express");
 var bodyParser = require("body-parser");
@@ -1556,6 +1557,73 @@ app.post("/consultar_ssl", function(req, res){
         log.warn("Url nao informada");
     
 		sendRes(res, false, {"Msg": "Url nao informada"});
+
+	}
+
+});
+
+app.post("/pasta_tamanho", function(req, res){
+
+    if( req.body.pasta ) 
+	{
+
+        log.info("-------------------------------------");
+        log.info("Funcao: pasta_tamanho");        
+        log.info("Usuario: " + req.auth.user);
+        log.info("Pasta: " + req.body.pasta);
+        log.info(req.body);
+
+        console.log("-------------------------------------");
+        console.log("Funcao: pasta_tamanho");        
+        console.log("Usuario: " + req.auth.user);
+        console.log("Pasta: " + req.body.pasta);
+    
+        start = process.hrtime(); 
+
+        try {
+
+            getSize(req.body.pasta, function(err, size) {
+
+                if (err) 
+                {
+
+                    log.warn("Falha em Obter Tamanho");
+                    log.warn(ex);
+                
+                    console.log(ex);
+
+                    sendRes(res, false, {"Msg": "Falha em Obter Tamanho"});
+
+                }else{
+
+                    var TempoDuracao = elapsed_time();
+
+                    sendRes(res, true, {
+                                        "Duracao": TempoDuracao,
+                                        "Tamanho": size,
+                                        "Tamanho2": filesize(size, {round: 0})
+                                        });
+
+                }
+
+            });
+
+        } catch (ex) {
+            
+            log.warn("Falha em Obter Tamanho");
+            log.warn(ex);
+        
+            console.log(ex);
+
+            sendRes(res, false, {"Msg": "Falha em Obter Tamanho"});
+        
+        }
+
+	}else{
+
+        log.warn("Pasta nao informada");
+    
+		sendRes(res, false, {"Msg": "Pasta nao informada"});
 
 	}
 

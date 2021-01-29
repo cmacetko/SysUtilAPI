@@ -1,6 +1,6 @@
 {
     "name": "sysutilapi",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "description": "SysUtilAPI é uma API, que roda em Nodejs e combina várias ferramentas diferentes úteis.",
     "author": "Paloma Macetko <cmacetko@gmail.com>",
     "main": "index.js",
@@ -36,7 +36,9 @@
         "consultar ssl"
     ],
     "dependencies": {
+        "@syndicats/drivelist": "^9.0.0",
         "async": "^3.2.0",
+        "check-disk-space": "^2.1.0",
         "checksslcertificate": "^1.0.5",
         "consulta-cnpj-ws": "^2.0.0",
         "express": "^4.17.1",

@@ -24,6 +24,8 @@ var sinespApi = require('sinesp-api');
 var CNPJ = require('consulta-cnpj-ws');
 var checkSslCertificate = require('checkSslCertificate').default
 var getSize = require('get-folder-size');
+var drivelist = require('@syndicats/drivelist');
+var checkDiskSpace = require('check-disk-space')
 
 var express = require("express");
 var bodyParser = require("body-parser");
@@ -1624,6 +1626,115 @@ app.post("/pasta_tamanho", function(req, res){
         log.warn("Pasta nao informada");
     
 		sendRes(res, false, {"Msg": "Pasta nao informada"});
+
+	}
+
+});
+
+app.post("/hds_listagem", function(req, res){
+
+    log.info("-------------------------------------");
+    log.info("Funcao: hds_listagem");        
+    log.info("Usuario: " + req.auth.user);
+    log.info(req.body);
+
+    console.log("-------------------------------------");
+    console.log("Funcao: hds_listagem");        
+    console.log("Usuario: " + req.auth.user);
+
+    start = process.hrtime(); 
+
+    try {
+
+        (async function(){
+
+            try {
+
+                var drives = await drivelist.list();
+
+                var TempoDuracao = elapsed_time();
+
+                sendRes(res, true, {
+                                    "Duracao": TempoDuracao,
+                                    "Consulta": drives
+                                    });
+
+            } catch (ex) {
+                
+                log.warn("Falha em Obter Informacoes");
+                log.warn(ex);
+            
+                sendRes(res, false, {"Msg": "Falha em Obter Informacoes"});
+            
+            }
+
+        })();
+
+    } catch (ex) {
+        
+        log.warn("Falha em Obter Informacoes");
+        log.warn(ex);
+    
+        console.log(ex);
+
+        sendRes(res, false, {"Msg": "Falha em Obter Informacoes"});
+    
+    }
+
+});
+
+app.post("/hds_espaco", function(req, res){
+
+    if( req.body.unidade ) 
+	{
+
+        log.info("-------------------------------------");
+        log.info("Funcao: hds_espaco");        
+        log.info("Usuario: " + req.auth.user);
+        log.info("Unidade: " + req.body.unidade);
+        log.info(req.body);
+
+        console.log("-------------------------------------");
+        console.log("Funcao: hds_espaco");        
+        console.log("Usuario: " + req.auth.user);
+        console.log("Unidade: " + req.body.unidade);
+    
+        start = process.hrtime(); 
+
+        try {
+
+            checkDiskSpace(req.body.unidade).then((diskSpace) => {
+                
+                var TempoDuracao = elapsed_time();
+
+                sendRes(res, true, {
+                                    "Duracao": TempoDuracao,
+                                    "Consulta": {
+                                        "Total": diskSpace.size,
+                                        "Total2": filesize(diskSpace.size, {round: 2}),
+                                        "Disponivel": diskSpace.free,
+                                        "Disponivel2": filesize(diskSpace.free, {round: 2})
+                                    }
+                                    });
+
+            })
+
+        } catch (ex) {
+            
+            log.warn("Falha em Obter Informacao");
+            log.warn(ex);
+        
+            console.log(ex);
+
+            sendRes(res, false, {"Msg": "Falha em Obter Informacao"});
+        
+        }
+
+	}else{
+
+        log.warn("Unidade nao informada");
+    
+		sendRes(res, false, {"Msg": "Unidade nao informada"});
 
 	}
 

@@ -744,6 +744,77 @@ pasta_tamanho
 }
 ```
 
+## Verificar os HDs e suas Unidades
+
+**Método:**
+hds_listagem
+
+**Retorno:**
+```json
+{
+  "httpcode": 200,
+  "body": {
+    "Duracao": "0s 88.1844000000ms",
+    "Consulta": [
+      {
+        "enumerator": "USBSTOR",
+        "busType": "USB",
+        "busVersion": "2.0",
+        "device": "\\\\.\\PhysicalDrive1",
+        "devicePath": null,
+        "raw": "\\\\.\\PhysicalDrive1",
+        "description": "Generic External USB Device",
+        "error": null,
+        "size": 480113589760,
+        "blockSize": 512,
+        "logicalBlockSize": 512,
+        "mountpoints": [
+          {
+            "path": "G:\\"
+          }
+        ],
+        "isReadOnly": false,
+        "isSystem": false,
+        "isVirtual": false,
+        "isRemovable": true,
+        "isCard": false,
+        "isSCSI": false,
+        "isUSB": true,
+        "isUAS": false
+      }
+    ]
+  }
+}
+```
+
+## Verifica o espaço total e o espaço disponível por uma partição
+
+**Método:**
+hds_espaco
+
+**Exemplo:**
+```json
+{
+  "unidade": "C:\\"
+}
+```
+
+**Retorno:**
+```json
+{
+  "httpcode": 200,
+  "body": {
+    "Duracao": "0s 605.3382000000ms",
+    "Consulta": {
+      "Total": 238457069568,
+      "Total2": "222 GB",
+      "Disponivel": 4829741056,
+      "Disponivel2": "4 GB"
+    }
+  }
+}
+```
+
 # Contato
 
 **Paloma Macetko**

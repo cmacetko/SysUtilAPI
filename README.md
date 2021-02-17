@@ -859,6 +859,44 @@ iis_sites_listar
 }
 ```
 
+## Gera um SSL para um site que esteja no IIS ou renova caso já estiver instalado o SSL (Via Let's Encrypt)
+
+**Dependências:**
+Este método requer que você tenha no servidor a aplicação **win-acme** em sua versão **pluggable**, que pode ser baixada em:
+https://github.com/win-acme/win-acme/releases/
+
+Após isto, abra o arquivo **index.js** e na váriavel **cfg_wacs** preencha com o caminho completo onde o ACME esta descompactado, Exemplo:
+```javascript
+var cfg_wacs = "C:\\Comandos\\SSL\\wacs.exe";
+```
+
+**Método:**
+iis_config_ssl
+
+**Exemplo:**
+```json
+{
+  "dominio": "teste1.cmacetko.online",
+  "dominios": "teste1.cmacetko.online,teste2.cmacetko.online",
+  "email": "cmacetko@gmail.com"
+}
+```
+
+**Retorno:**
+```json
+{
+	"httpcode": 200,
+	"body":{
+		"Duracao": "4s 570.5203800000ms",
+		"Detalhes":[],
+		"PosConsulta":{"daysRemaining": 90, "valid": true, "validFrom": "2021-02-17T17:21:35.000Z", "validTo": "2021-05-18T17:21:35.000Z",…}
+	}
+}
+```
+
+- Em **Detalhes**, será retornado o log completo da renovação
+- Em **PosConsulta**, indica o resultado de uma consulta feita após a renovação, para confirmar que a renovação teve sucesso
+
 # Contato
 
 **Paloma Macetko**

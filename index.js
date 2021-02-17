@@ -27,6 +27,7 @@ var checkSslCertificate = require('checkSslCertificate').default
 var getSize = require('get-folder-size');
 var drivelist = require('@syndicats/drivelist');
 var checkDiskSpace = require('check-disk-space')
+var sslChecker = require('ssl-checker')
 
 var express = require("express");
 var bodyParser = require("body-parser");
@@ -42,6 +43,7 @@ log = SimpleNodeLogger.createRollingFileLogger(opts);
 
 var cfg_porta = 9091;
 var cfg_usuarios = { 'AAA': 'BBB' };
+var cfg_wacs = "C:\\Comandos\\SSL\\wacs.exe";
 
 var start = process.hrtime();
 
@@ -1794,6 +1796,115 @@ app.post("/iis_sites_listar", function(req, res){
 
 		sendRes(res, false, {"Msg": "Falha em Obter Informacao"});
 	
+	}
+
+});
+
+app.post("/iis_config_ssl", function(req, res){
+
+	if( req.body.dominio && req.body.dominios && req.body.email ) 
+	{
+		
+		log.info("-------------------------------------");
+		log.info("Funcao: iis_config_ssl");        
+		log.info("Usuario: " + req.auth.user);
+        log.info("dominio: " + req.body.dominio);
+		log.info(req.body);
+
+		console.log("-------------------------------------");
+		console.log("Funcao: iis_config_ssl");        
+		console.log("Usuario: " + req.auth.user);
+        console.log("dominio: " + req.body.dominio);
+		
+		start = process.hrtime(); 
+
+		try {
+
+			iis.SitesRetCodigo(req.body.dominio)
+			.then(Result1 => {
+					
+				iis.SitesConfigSSL(cfg_wacs, Result1, req.body.dominio, req.body.dominios, req.body.email)
+				.then(Result2 => {
+					
+					(async function(){
+						
+						var getSslDetails = {};
+						
+						try {
+
+							getSslDetails = await sslChecker(req.body.dominio);
+
+						} catch(err) {
+							
+							//
+
+						}
+						
+						var TempoDuracao = elapsed_time();
+
+						sendRes(res, true, {
+											"Duracao": TempoDuracao,
+											"Detalhes": Result2,
+											"PosConsulta": getSslDetails
+											});
+					
+					})();
+										
+				})
+				.catch(error => {
+					
+					log.warn("Falha em Obter Detalhes");
+					log.warn(error);
+				
+					if( error.message != undefined )
+					{
+
+						sendRes(res, false, {"Msg": error.message});
+
+					}else{
+
+						sendRes(res, false, {"Msg": "Falha em Obter Detalhes"});
+
+					}
+					
+				});
+									
+			})
+			.catch(error => {
+				
+				log.warn("Falha em Obter Detalhes");
+				log.warn(error);
+			
+				if( error.message != undefined )
+				{
+
+					sendRes(res, false, {"Msg": error.message});
+
+				}else{
+
+					sendRes(res, false, {"Msg": "Falha em Obter Detalhes"});
+
+				}
+				
+			});
+
+		} catch (ex) {
+			
+			log.warn("Falha em Obter Informacao");
+			log.warn(ex);
+		
+			console.log(ex);
+
+			sendRes(res, false, {"Msg": "Falha em Obter Informacao"});
+		
+		}
+	
+	}else{
+
+        log.warn("Dominio nao informado");
+    
+		sendRes(res, false, {"Msg": "Dominio nao informado"});
+
 	}
 
 });

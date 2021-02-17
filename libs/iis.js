@@ -33,7 +33,7 @@ async function SitesListar()
 				if(err)
 				{
 					
-					throw err;
+					reject(err);
 					
 				}else{
 				
@@ -42,7 +42,7 @@ async function SitesListar()
 						if(err)
 						{
 							
-							throw err;
+							reject(err);
 							
 						}else{
 							
@@ -92,7 +92,7 @@ async function SitesListar()
 
         } catch(err) {
             
-            throw err;
+            reject(err);
 
         }
 
@@ -100,4 +100,114 @@ async function SitesListar()
 
 }
 
+async function SitesRetCodigo(Dominio)
+{
+
+    return new Promise((resolve, reject) => {
+
+		(async function(){
+		
+			try {
+
+				var ListSites = await SitesListar();
+				var CodigoRet = 0;
+				
+				ListSites.forEach(function(RegSite){
+
+					if( RegSite.Name == Dominio )
+					{
+
+						CodigoRet = RegSite.ID;
+
+					}
+			
+				});
+				
+				if( CodigoRet != 0 )
+				{
+					
+					resolve(CodigoRet);
+					
+				}else{
+					
+					reject("Falha em Identificar Site");
+					
+				}
+				
+			} catch(err) {
+				
+				reject(err);
+
+			}
+		
+		})();
+
+    });
+
+}
+
+async function SitesConfigSSL(Wacs, CodigoDominio, Dominio, Dominios, Email)
+{
+
+    return new Promise((resolve, reject) => {
+
+		try {
+
+			exec(Wacs + " --target iis --siteid " + CodigoDominio + " --host " + Dominios + " --commonname " + Dominio + " --installation iis --emailaddress " + Email + " --accepttos", function(err, outxml){
+				
+				if(err)
+				{
+					
+					reject(err);
+					
+				}else{
+					
+					var TmpSep          = outxml.split("\n");
+					var TmpRet          = [];
+
+					TmpSep.forEach(function(TmpSep2){
+
+						if( TmpSep2 != "" )
+						{
+
+							TmpSep2         = TmpSep2.trim();
+
+							if( TmpSep2 != "" )
+							{
+
+								TmpRet.push(TmpSep2);
+
+							}
+
+						}
+				
+					});
+					
+					if( outxml.indexOf("created") !== -1 )
+					{
+						
+						resolve(TmpRet);
+						
+					}else{
+						
+						reject(TmpRet);
+						
+					}
+					
+				}
+				
+			});
+			
+		} catch(err) {
+			
+			reject(err);
+
+		}
+
+    });
+
+}
+
 module.exports.SitesListar = SitesListar;
+module.exports.SitesRetCodigo = SitesRetCodigo;
+module.exports.SitesConfigSSL = SitesConfigSSL;

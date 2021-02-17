@@ -1,6 +1,6 @@
 {
     "name": "sysutilapi",
-    "version": "1.0.9",
+    "version": "1.0.10",
     "description": "SysUtilAPI é uma API, que roda em Nodejs e combina várias ferramentas diferentes úteis.",
     "author": "Paloma Macetko <cmacetko@gmail.com>",
     "main": "index.js",
@@ -40,6 +40,7 @@
         "async": "^3.2.0",
         "check-disk-space": "^2.1.0",
         "checksslcertificate": "^1.0.5",
+        "child_process": "^1.0.2",
         "consulta-cnpj-ws": "^2.0.0",
         "express": "^4.17.1",
         "express-basic-auth": "^1.2.0",
@@ -53,6 +54,7 @@
         "native-dns": "^0.7.0",
         "node-server-screenshot": "^0.2.4",
         "nodejs-traceroute": "^1.2.0",
+        "os": "^0.1.1",
         "path": "^0.12.7",
         "pdf-to-image": "git+https://github.com/cmacetko/PdfToImage.git",
         "ping": "^0.4.0",
@@ -62,9 +64,11 @@
         "sitemap-generator": "^8.5.1",
         "tesseract.js": "^2.1.4",
         "tmp": "^0.2.1",
+        "underscore": "^1.12.0",
         "uuid": "^3.1.0",
         "whois-json": "^2.0.4",
         "wkhtmltopdf": "^0.1.6",
+        "xml2js": "^0.4.23",
         "zip": "^1.2.0"
     }
 }

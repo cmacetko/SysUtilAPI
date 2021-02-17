@@ -5,6 +5,7 @@ var filesize = require("filesize");
 var http = require('http');
 var async = require('async');
 var path = require('path');
+var iis = require('./libs/iis');
 
 var wkhtmltopdf = require("wkhtmltopdf");
 var PDFImage = require("pdf-to-image").PDFImage;
@@ -40,7 +41,7 @@ opts = {
 log = SimpleNodeLogger.createRollingFileLogger(opts);
 
 var cfg_porta = 9091;
-var cfg_usuarios = { 'AAA': 'BBB', 'CCC': 'DDD' };
+var cfg_usuarios = { 'AAA': 'BBB' };
 
 var start = process.hrtime();
 
@@ -1736,6 +1737,63 @@ app.post("/hds_espaco", function(req, res){
     
 		sendRes(res, false, {"Msg": "Unidade nao informada"});
 
+	}
+
+});
+
+app.post("/iis_sites_listar", function(req, res){
+
+	log.info("-------------------------------------");
+	log.info("Funcao: iis_sites_listar");        
+	log.info("Usuario: " + req.auth.user);
+	log.info(req.body);
+
+	console.log("-------------------------------------");
+	console.log("Funcao: iis_sites_listar");        
+	console.log("Usuario: " + req.auth.user);
+
+	start = process.hrtime(); 
+
+	try {
+
+		iis.SitesListar()
+		.then(result => {
+                
+			var TempoDuracao = elapsed_time();
+
+			sendRes(res, true, {
+								"Duracao": TempoDuracao,
+								"Consulta": result
+								});
+								
+		})
+		.catch(error => {
+			
+			log.warn("Falha em Obter Detalhes");
+			log.warn(error);
+		
+			if( error.message != undefined )
+			{
+
+				sendRes(res, false, {"Msg": error.message});
+
+			}else{
+
+				sendRes(res, false, {"Msg": "Falha em Obter Detalhes"});
+
+			}
+			
+		});
+
+	} catch (ex) {
+		
+		log.warn("Falha em Obter Informacao");
+		log.warn(ex);
+	
+		console.log(ex);
+
+		sendRes(res, false, {"Msg": "Falha em Obter Informacao"});
+	
 	}
 
 });

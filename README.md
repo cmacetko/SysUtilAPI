@@ -815,6 +815,50 @@ hds_espaco
 }
 ```
 
+## Verifica o espaço total e o espaço disponível por uma partição
+
+**Método:**
+iis_sites_listar
+
+**Retorno:**
+```json
+{
+   "httpcode":200,
+   "body":{
+      "Duracao":"0s 274.4640920000ms",
+      "Consulta":[
+         {
+            "Name":"teste1.cmacetko.online",
+            "ID":"428",
+            "Bindings":[
+               {
+                  "Prefixo":"http/*",
+                  "Porta":"80",
+                  "Dominio":"teste1.cmacetko.online"
+               },
+               {
+                  "Prefixo":"http/*",
+                  "Porta":"80",
+                  "Dominio":"www.teste1.cmacetko.online"
+               },
+               {
+                  "Prefixo":"http/*",
+                  "Porta":"80",
+                  "Dominio":"ipv4.teste1.cmacetko.online"
+               },
+               {
+                  "Prefixo":"https/*",
+                  "Porta":"443",
+                  "Dominio":"teste1.cmacetko.online"
+               }
+            ],
+            "State":"Started"
+         }
+      ]
+   }
+}
+```
+
 # Contato
 
 **Paloma Macetko**

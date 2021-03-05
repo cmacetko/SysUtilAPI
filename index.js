@@ -1593,9 +1593,9 @@ app.post("/pasta_tamanho", function(req, res){
                 {
 
                     log.warn("Falha em Obter Tamanho");
-                    log.warn(ex);
+                    log.warn(err);
                 
-                    console.log(ex);
+                    console.log(err);
 
                     sendRes(res, false, {"Msg": "Falha em Obter Tamanho"});
 

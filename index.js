@@ -288,6 +288,22 @@ app.post("/pdf_to_jpg", function(req, res){
                     
                         log.info(">>> SUCESSO <<<")
                         log.info(imagesPath);
+						
+						let TmpListArqs = [];
+					
+						imagesPath.forEach(function(imageObj){
+
+							let TmpStg1 = imageObj;
+							TmpStg1 = TmpStg1.replace(".jpg", "");
+							TmpStg1 = TmpStg1.split("-");
+							TmpStg1.reverse();
+							
+							let TmpStg2 = parseInt(TmpStg1[0]);
+							TmpStg2 = TmpStg2 + 1;
+												
+							TmpListArqs.push({ "Pagina": TmpStg2, "Imagem": imageObj });
+							
+						});
 
                         var TempoDuracao = elapsed_time();
 
@@ -295,11 +311,14 @@ app.post("/pdf_to_jpg", function(req, res){
                         let TmpCtrl1 = 0;
 
                         async.eachSeries(
-                        imagesPath,
-                        function(filename, cb) {
+                        TmpListArqs,
+                        function(ObjFile, cb) {
 
                             TmpCtrl1++;
+							
+							console.log(ObjFile);
 
+							let filename = ObjFile["Imagem"];
                             let TmpFile = {};
                             var stats = fs.statSync(filename);
 
@@ -316,15 +335,15 @@ app.post("/pdf_to_jpg", function(req, res){
 
                                 }else{
 
-                                    log.info("Pagina: " + TmpCtrl1);
+                                    log.info("Pagina: " + ObjFile["Pagina"]);
                                     log.info("Tamanho: " + stats.size)
                                     log.info("Tamanho2: " + filesize(stats.size, {round: 0}))
 
-                                    console.log("Pagina: " + TmpCtrl1)
+                                    console.log("Pagina: " + ObjFile["Pagina"])
                                     console.log("Tamanho: " + stats.size)
                                     console.log("Tamanho2: " + filesize(stats.size, {round: 0}))
 
-                                    TmpFile["Pagina"]           = TmpCtrl1;
+                                    TmpFile["Pagina"]           = ObjFile["Pagina"];
                                     TmpFile["Tamanho"]          = stats.size;
                                     TmpFile["Tamanho2"]         = filesize(stats.size, {round: 0});
                                     TmpFile["Imagem"]           = content.toString();
@@ -338,9 +357,9 @@ app.post("/pdf_to_jpg", function(req, res){
                             });
                         },
                         function(err) {
-                            
+							
                             remover_arquivo(output);
-                            remover_arquivo2(imagesPath);
+							remover_arquivo2(imagesPath);
                             sendRes(res, true, {"Arquivos": TmpList, "Duracao": TempoDuracao});
 
                         }

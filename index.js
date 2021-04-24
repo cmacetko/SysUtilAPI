@@ -147,7 +147,13 @@ app.use(basicAuth({
 
 app.get("/", function(req, res){
 
-    sendRes(res, false, {"Msg": "Utilize um dos metodos disponiveis"});
+    sendRes(res, true, {"Msg": "Utilize um dos metodos disponiveis"});
+    
+});
+
+app.post("/teste_conexao", function(req, res){
+
+    sendRes(res, true, {"Msg": "Tudo OK"});
     
 });
 

@@ -41,9 +41,7 @@ opts = {
 },  
 log = SimpleNodeLogger.createRollingFileLogger(opts);
 
-var cfg_porta = 9091;
-var cfg_usuarios = { 'AAA': 'BBB' };
-var cfg_wacs = "C:\\Comandos\\SSL\\wacs.exe";
+const { Cfg } = require('./util/Constants');
 
 var start = process.hrtime();
 
@@ -142,7 +140,7 @@ app.use(function(req, res, next){
 });
 
 app.use(basicAuth({
-    users: cfg_usuarios
+    users: Cfg.Usuarios
 }))
 
 app.get("/", function(req, res){
@@ -1848,7 +1846,7 @@ app.post("/iis_config_ssl", function(req, res){
 			iis.SitesRetCodigo(req.body.dominio)
 			.then(Result1 => {
 					
-				iis.SitesConfigSSL(cfg_wacs, Result1, req.body.dominio, req.body.dominios, req.body.email)
+				iis.SitesConfigSSL(Cfg.Wacs, Result1, req.body.dominio, req.body.dominios, req.body.email)
 				.then(Result2 => {
 					
 					(async function(){
@@ -1934,9 +1932,9 @@ app.post("/iis_config_ssl", function(req, res){
 
 });
 
-app.listen(cfg_porta, function(){ 
+app.listen(Cfg.Porta, function(){ 
     
-    console.log("SysUtilAPI - Porta: "  + cfg_porta);
+    console.log("SysUtilAPI - Porta: "  + Cfg.Porta);
     console.log("Desenvolvido por PALOMA MACETKO <cmacetko@gmail.com>");
 
     console.log("--------------");

@@ -56,7 +56,7 @@
         "nodejs-traceroute": "^1.2.0",
         "os": "^0.1.1",
         "path": "^0.12.7",
-        "pdf-to-image": "git+https://github.com/cmacetko/PdfToImage.git",
+        "cmacetko-pdf-to-image": "^1.0.0",
         "ping": "^0.4.0",
         "qrcode": "^1.4.4",
         "simple-node-logger": "^18.12.24",

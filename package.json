@@ -1,6 +1,6 @@
 {
     "name": "sysutilapi",
-    "version": "1.0.11",
+    "version": "1.0.12",
     "description": "SysUtilAPI é uma API, que roda em Nodejs e combina várias ferramentas diferentes úteis.",
     "author": "Paloma Macetko <cmacetko@gmail.com>",
     "main": "index.js",

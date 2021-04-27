@@ -8,7 +8,7 @@ var path = require('path');
 var iis = require('./libs/iis');
 
 var wkhtmltopdf = require("wkhtmltopdf");
-var PDFImage = require("pdf-to-image").PDFImage;
+var PDFImage = require("cmacetko-pdf-to-image").PDFImage;
 var Tesseract = require("tesseract.js");
 var ping = require('ping');
 var Traceroute = require('nodejs-traceroute');
@@ -273,7 +273,7 @@ app.post("/pdf_to_jpg", function(req, res){
 
                 response.pipe(writeStream).on('finish', function() {
                     
-                    var PDFImage = require("pdf-to-image").PDFImage;
+                    var PDFImage = require("cmacetko-pdf-to-image").PDFImage;
                     
                     var pdfImage = new PDFImage(output, {
                         outputDirectory: __dirname +  "/output/",
@@ -1846,7 +1846,12 @@ app.post("/iis_config_ssl", function(req, res){
 			iis.SitesRetCodigo(req.body.dominio)
 			.then(Result1 => {
 					
-				iis.SitesConfigSSL(Cfg.Wacs, Result1, req.body.dominio, req.body.dominios, req.body.email)
+				let DominiosList = req.body.dominios;
+				DominiosList = DominiosList.split(",");
+				
+				let DominioRaiz = DominiosList[0];
+				
+				iis.SitesConfigSSL(Cfg.Wacs, Result1, DominioRaiz, req.body.dominios, req.body.email)
 				.then(Result2 => {
 					
 					(async function(){
@@ -1855,7 +1860,7 @@ app.post("/iis_config_ssl", function(req, res){
 						
 						try {
 
-							getSslDetails = await sslChecker(req.body.dominio);
+							getSslDetails = await sslChecker(DominioRaiz);
 
 						} catch(err) {
 							

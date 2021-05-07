@@ -1823,6 +1823,76 @@ app.post("/iis_sites_listar", function(req, res){
 
 });
 
+app.post("/iis_sites_detalhes", function(req, res){
+
+	if( req.body.dominio ) 
+	{
+		
+		log.info("-------------------------------------");
+		log.info("Funcao: iis_sites_detalhes");        
+		log.info("Usuario: " + req.auth.user);
+        log.info("dominio: " + req.body.dominio);
+		log.info(req.body);
+
+		console.log("-------------------------------------");
+		console.log("Funcao: iis_sites_detalhes");        
+		console.log("Usuario: " + req.auth.user);
+        console.log("dominio: " + req.body.dominio);
+		
+		start = process.hrtime(); 
+
+		try {
+
+			iis.SitesRetDetalhes(req.body.dominio)
+			.then(Result => {
+				
+				var TempoDuracao = elapsed_time();
+
+				sendRes(res, true, {
+									"Duracao": TempoDuracao,
+									"Detalhes": Result
+									});
+									
+			})
+			.catch(error => {
+				
+				log.warn("Falha em Obter Detalhes");
+				log.warn(error);
+			
+				if( error.message != undefined )
+				{
+
+					sendRes(res, false, {"Msg": error.message});
+
+				}else{
+
+					sendRes(res, false, {"Msg": "Falha em Obter Detalhes"});
+
+				}
+				
+			});
+
+		} catch (ex) {
+			
+			log.warn("Falha em Obter Informacao");
+			log.warn(ex);
+		
+			console.log(ex);
+
+			sendRes(res, false, {"Msg": "Falha em Obter Informacao"});
+		
+		}
+	
+	}else{
+
+        log.warn("Dominio nao informado");
+    
+		sendRes(res, false, {"Msg": "Dominio nao informado"});
+
+	}
+
+});
+
 app.post("/iis_config_ssl", function(req, res){
 
 	if( req.body.dominio && req.body.dominios && req.body.email ) 
@@ -1934,6 +2004,386 @@ app.post("/iis_config_ssl", function(req, res){
 		sendRes(res, false, {"Msg": "Dominio nao informado"});
 
 	}
+
+});
+
+app.post("/filezilla_contas_listar", function(req, res){
+
+    log.info("-------------------------------------");
+    log.info("Funcao: filezilla_contas_listar");
+    log.info("Usuario: " + req.auth.user);
+    log.info(req.body);
+
+    console.log("-------------------------------------");
+    console.log("Funcao: filezilla_contas_listar");
+    console.log("Usuario: " + req.auth.user);
+
+    FilezillaCtrl.init(Cfg.Filezilla).then(function(){
+
+        FilezillaCtrl.contas_listar().then(function(DadRet){
+    
+            console.log(JSON.stringify(DadRet));
+
+            log.info(">>> SUCESSO <<<")
+            log.info(JSON.stringify(DadRet))
+
+            sendRes(res, true, DadRet);
+        
+        }).catch(function(err){
+    
+            log.warn(err.message);
+    
+		    sendRes(res, false, {"Msg": err.message});
+    
+        });
+    
+    }).catch(function(err){
+    
+        log.warn(err.message);
+    
+		sendRes(res, false, {"Msg": err.message});
+    
+    });
+
+});
+
+app.post("/filezilla_contas_alterar", function(req, res){
+
+    log.info("-------------------------------------");
+    log.info("Funcao: filezilla_contas_alterar");
+    log.info("Usuario: " + req.auth.user);
+    log.info(req.body);
+
+    console.log("-------------------------------------");
+    console.log("Funcao: filezilla_contas_alterar");
+    console.log("Usuario: " + req.auth.user);
+
+    if( req.body.Conta != "" && req.body.Senha != "" && req.body.Diretorio != "" ) 
+	{
+
+        FilezillaCtrl.init(Cfg.Filezilla).then(function(){
+
+            var InfDad = { Senha: req.body.Senha, Diretorio: req.body.Diretorio, Permissoes: req.body.Permissoes };
+
+            FilezillaCtrl.contas_alterar(req.body.Conta, InfDad).then(function(){
+        
+                log.info(">>> SUCESSO <<<")
+
+                sendRes(res, true);
+            
+            }).catch(function(err){
+        
+                log.warn(err.message);
+        
+                sendRes(res, false, {"Msg": err.message});
+        
+            });
+        
+        }).catch(function(err){
+        
+            log.warn(err.message);
+        
+            sendRes(res, false, {"Msg": err.message});
+        
+        });
+
+    }else{
+
+        log.warn("Existem campos nao preenchidos");
+
+        sendRes(res, false, {"Msg": "Existem campos nao preenchidos"});
+        
+    }
+
+});
+
+app.post("/filezilla_contas_alterar_senha", function(req, res){
+
+    log.info("-------------------------------------");
+    log.info("Funcao: filezilla_contas_alterar_senha");
+    log.info("Usuario: " + req.auth.user);
+    log.info(req.body);
+
+    console.log("-------------------------------------");
+    console.log("Funcao: filezilla_contas_alterar_senha");
+    console.log("Usuario: " + req.auth.user);
+
+    if( req.body.Conta != "" && req.body.Senha != "" ) 
+	{
+
+        FilezillaCtrl.init(Cfg.Filezilla).then(function(){
+
+            FilezillaCtrl.contas_alterar_senha(req.body.Conta, req.body.Senha).then(function(){
+        
+                log.info(">>> SUCESSO <<<")
+
+                sendRes(res, true);
+            
+            }).catch(function(err){
+        
+                log.warn(err.message);
+        
+                sendRes(res, false, {"Msg": err.message});
+        
+            });
+        
+        }).catch(function(err){
+        
+            log.warn(err.message);
+        
+            sendRes(res, false, {"Msg": err.message});
+        
+        });
+
+    }else{
+
+        log.warn("Existem campos nao preenchidos");
+
+        sendRes(res, false, {"Msg": "Existem campos nao preenchidos"});
+        
+    }
+
+});
+
+app.post("/filezilla_contas_alterar_diretorio", function(req, res){
+
+    log.info("-------------------------------------");
+    log.info("Funcao: filezilla_contas_alterar_diretorio");
+    log.info("Usuario: " + req.auth.user);
+    log.info(req.body);
+
+    console.log("-------------------------------------");
+    console.log("Funcao: filezilla_contas_alterar_diretorio");
+    console.log("Usuario: " + req.auth.user);
+
+    if( req.body.Conta != "" && req.body.Diretorio != "" ) 
+	{
+
+        FilezillaCtrl.init(Cfg.Filezilla).then(function(){
+
+            FilezillaCtrl.contas_alterar_diretorio(req.body.Conta, req.body.Diretorio).then(function(){
+        
+                log.info(">>> SUCESSO <<<")
+
+                sendRes(res, true);
+            
+            }).catch(function(err){
+        
+                log.warn(err.message);
+        
+                sendRes(res, false, {"Msg": err.message});
+        
+            });
+        
+        }).catch(function(err){
+        
+            log.warn(err.message);
+        
+            sendRes(res, false, {"Msg": err.message});
+        
+        });
+
+    }else{
+
+        log.warn("Existem campos nao preenchidos");
+
+        sendRes(res, false, {"Msg": "Existem campos nao preenchidos"});
+        
+    }
+
+});
+
+app.post("/filezilla_contas_alterar_permissoes", function(req, res){
+
+    log.info("-------------------------------------");
+    log.info("Funcao: filezilla_contas_alterar_permissoes");
+    log.info("Usuario: " + req.auth.user);
+    log.info(req.body);
+
+    console.log("-------------------------------------");
+    console.log("Funcao: filezilla_contas_alterar_permissoes");
+    console.log("Usuario: " + req.auth.user);
+
+    if( req.body.Conta != "" ) 
+	{
+
+        FilezillaCtrl.init(Cfg.Filezilla).then(function(){
+
+            FilezillaCtrl.contas_alterar_permissoes(req.body.Conta, req.body.Permissoes).then(function(){
+        
+                log.info(">>> SUCESSO <<<")
+
+                sendRes(res, true);
+            
+            }).catch(function(err){
+        
+                log.warn(err.message);
+        
+                sendRes(res, false, {"Msg": err.message});
+        
+            });
+        
+        }).catch(function(err){
+        
+            log.warn(err.message);
+        
+            sendRes(res, false, {"Msg": err.message});
+        
+        });
+
+    }else{
+
+        log.warn("Existem campos nao preenchidos");
+
+        sendRes(res, false, {"Msg": "Existem campos nao preenchidos"});
+        
+    }
+
+});
+
+app.post("/filezilla_contas_existe", function(req, res){
+
+    log.info("-------------------------------------");
+    log.info("Funcao: filezilla_contas_existe");
+    log.info("Usuario: " + req.auth.user);
+    log.info(req.body);
+
+    console.log("-------------------------------------");
+    console.log("Funcao: filezilla_contas_existe");
+    console.log("Usuario: " + req.auth.user);
+
+    if( req.body.Conta != "" ) 
+	{
+
+        FilezillaCtrl.init(Cfg.Filezilla).then(function(){
+
+            FilezillaCtrl.contas_existe(req.body.Conta).then(function(DadRet){
+        
+                log.info(">>> SUCESSO <<<")
+
+                sendRes(res, true, DadRet);
+            
+            }).catch(function(err){
+        
+                log.warn(err.message);
+        
+                sendRes(res, false, {"Msg": err.message});
+        
+            });
+        
+        }).catch(function(err){
+        
+            log.warn(err.message);
+        
+            sendRes(res, false, {"Msg": err.message});
+        
+        });
+
+    }else{
+
+        log.warn("Existem campos nao preenchidos");
+
+        sendRes(res, false, {"Msg": "Existem campos nao preenchidos"});
+        
+    }
+
+});
+
+app.post("/filezilla_contas_deletar", function(req, res){
+
+    log.info("-------------------------------------");
+    log.info("Funcao: filezilla_contas_deletar");
+    log.info("Usuario: " + req.auth.user);
+    log.info(req.body);
+
+    console.log("-------------------------------------");
+    console.log("Funcao: filezilla_contas_deletar");
+    console.log("Usuario: " + req.auth.user);
+
+    if( req.body.Conta != "" ) 
+	{
+
+        FilezillaCtrl.init(Cfg.Filezilla).then(function(){
+
+            FilezillaCtrl.contas_deletar(req.body.Conta).then(function(){
+        
+                log.info(">>> SUCESSO <<<")
+
+                sendRes(res, true);
+            
+            }).catch(function(err){
+        
+                log.warn(err.message);
+        
+                sendRes(res, false, {"Msg": err.message});
+        
+            });
+        
+        }).catch(function(err){
+        
+            log.warn(err.message);
+        
+            sendRes(res, false, {"Msg": err.message});
+        
+        });
+
+    }else{
+
+        log.warn("Existem campos nao preenchidos");
+
+        sendRes(res, false, {"Msg": "Existem campos nao preenchidos"});
+        
+    }
+
+});
+
+app.post("/filezilla_contas_criar", function(req, res){
+
+    log.info("-------------------------------------");
+    log.info("Funcao: filezilla_contas_criar");
+    log.info("Usuario: " + req.auth.user);
+    log.info(req.body);
+
+    console.log("-------------------------------------");
+    console.log("Funcao: filezilla_contas_criar");
+    console.log("Usuario: " + req.auth.user);
+
+    if( req.body.Conta != "" && req.body.Senha != "" && req.body.Diretorio != "" ) 
+	{
+
+        FilezillaCtrl.init(Cfg.Filezilla).then(function(){
+
+            var InfDad = { Senha: req.body.Senha, Diretorio: req.body.Diretorio, Permissoes: req.body.Permissoes };
+
+            FilezillaCtrl.contas_criar(req.body.Conta, InfDad).then(function(){
+        
+                log.info(">>> SUCESSO <<<")
+
+                sendRes(res, true);
+            
+            }).catch(function(err){
+        
+                log.warn(err.message);
+        
+                sendRes(res, false, {"Msg": err.message});
+        
+            });
+        
+        }).catch(function(err){
+        
+            log.warn(err.message);
+        
+            sendRes(res, false, {"Msg": err.message});
+        
+        });
+
+    }else{
+
+        log.warn("Existem campos nao preenchidos");
+
+        sendRes(res, false, {"Msg": "Existem campos nao preenchidos"});
+        
+    }
 
 });
 

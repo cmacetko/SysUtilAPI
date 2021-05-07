@@ -146,6 +146,79 @@ async function SitesRetCodigo(Dominio)
 
 }
 
+async function SitesRetDetalhes(Dominio)
+{
+
+    return new Promise((resolve, reject) => {
+
+        try {
+
+            var parser = new xml2js.Parser();
+			
+            exec(Util_RetAppCmd() + " list site \"" + Dominio + "\" /config /xml", function(err, outxml){
+				
+				if(err)
+				{
+					
+					reject(err);
+					
+				}else{
+				
+					parser.parseString(outxml, function(err, result) {
+						
+						if(err)
+						{
+							
+							reject(err);
+							
+						}else{
+							
+							var RetFinal		= {
+							"Diretorio": 		""
+							};
+							
+							try {
+									
+								result.appcmd.SITE[0].site[0].application[0]["virtualDirectory"].forEach(function(TmpSep1){
+
+									if( TmpSep1["$"]["path"] == "/" )
+									{
+										
+										if( TmpSep1["$"]["physicalPath"] != "" )
+										{
+											
+											RetFinal["Diretorio"]		= TmpSep1["$"]["physicalPath"].trim();
+											
+										}
+										
+									}
+							
+								});
+							
+							} catch(err) {
+								
+							}
+							
+							resolve(RetFinal);
+
+						}
+						
+					});
+					
+				}
+
+            });
+
+        } catch(err) {
+            
+            reject(err);
+
+        }
+
+    });
+
+}
+
 async function SitesConfigSSL(Wacs, CodigoDominio, Dominio, Dominios, Email)
 {
 
@@ -210,4 +283,5 @@ async function SitesConfigSSL(Wacs, CodigoDominio, Dominio, Dominios, Email)
 
 module.exports.SitesListar = SitesListar;
 module.exports.SitesRetCodigo = SitesRetCodigo;
+module.exports.SitesRetDetalhes = SitesRetDetalhes;
 module.exports.SitesConfigSSL = SitesConfigSSL;

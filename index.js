@@ -1895,7 +1895,7 @@ app.post("/iis_sites_detalhes", function(req, res){
 
 app.post("/iis_config_ssl", function(req, res){
 
-	if( req.body.dominio && req.body.dominios && req.body.email ) 
+	if( req.body.dominio && req.body.dominios && req.body.email && req.body.empresa ) 
 	{
 		
 		log.info("-------------------------------------");
@@ -1913,6 +1913,25 @@ app.post("/iis_config_ssl", function(req, res){
 
 		try {
 
+            let RetWacs         = "";
+
+            if( req.body.empresa == "LetsEncrypt" ){
+
+                RetWacs             = Cfg.Wacs_LetsEncrypt;
+
+            }else if( req.body.empresa == "ZeroSSL" ){
+
+                RetWacs             = Cfg.Wacs_ZeroSSL
+
+            }else{
+
+                log.warn("A Empresa selecionada nao possui automacao");
+                sendRes(res, false, {"Msg": "A Empresa selecionada nao possui automacao"});
+
+                return false;
+
+            }
+
 			iis.SitesRetCodigo(req.body.dominio)
 			.then(Result1 => {
 					
@@ -1921,7 +1940,7 @@ app.post("/iis_config_ssl", function(req, res){
 				
 				let DominioRaiz = DominiosList[0];
 				
-				iis.SitesConfigSSL(Cfg.Wacs, Result1, DominioRaiz, req.body.dominios, req.body.email)
+				iis.SitesConfigSSL(RetWacs, Result1, DominioRaiz, req.body.dominios, req.body.email)
 				.then(Result2 => {
 					
 					(async function(){

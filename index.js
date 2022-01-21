@@ -28,6 +28,7 @@ var getSize = require('get-folder-size');
 var drivelist = require('@syndicats/drivelist');
 var checkDiskSpace = require('check-disk-space')
 var sslChecker = require('ssl-checker')
+var FilezillaCtrl = require('ctrlfilezillaserver');
 
 var express = require("express");
 var bodyParser = require("body-parser");
@@ -2026,6 +2027,72 @@ app.post("/iis_config_ssl", function(req, res){
 
 });
 
+app.post("/criar_diretorio", function(req, res){
+
+    log.info("-------------------------------------");
+    log.info("Funcao: criar_diretorio");
+    log.info("Usuario: " + req.auth.user);
+    log.info(req.body);
+
+    console.log("-------------------------------------");
+    console.log("Funcao: criar_diretorio");
+    console.log("Usuario: " + req.auth.user);
+
+    if( req.body.Diretorio != "" ) 
+	{
+
+        try {
+            
+            if( !fs.existsSync(req.body.Diretorio) )
+            {
+                
+                fs.mkdir(req.body.Diretorio, (err) => {
+                    
+                    if(err) 
+                    {
+                    
+                        log.warn("Erro ao Criar o Diretorio");
+                        log.warn(err);
+
+                        sendRes(res, false, {"Msg": "Erro ao Criar o Diretorio"});
+                        
+                    }else{
+
+                        log.info(">>> SUCESSO <<<")
+
+                        sendRes(res, true);
+                        
+                    }
+                    
+                });
+
+            }else{
+
+                log.warn("Ja existe este diretorio");
+
+                sendRes(res, false, {"Msg": "Ja existe este diretorio"});
+                
+            }
+
+        } catch (error) {
+            
+            log.warn("Falha em Criar Diretorio");
+			log.warn(error);
+
+			sendRes(res, false, {"Msg": "Falha em Criar Diretorio"});
+
+        }        
+
+    }else{
+
+        log.warn("Existem campos nao preenchidos");
+
+        sendRes(res, false, {"Msg": "Existem campos nao preenchidos"});
+        
+    }
+
+});
+
 app.post("/filezilla_contas_listar", function(req, res){
 
     log.info("-------------------------------------");
@@ -2041,8 +2108,6 @@ app.post("/filezilla_contas_listar", function(req, res){
 
         FilezillaCtrl.contas_listar().then(function(DadRet){
     
-            console.log(JSON.stringify(DadRet));
-
             log.info(">>> SUCESSO <<<")
             log.info(JSON.stringify(DadRet))
 
@@ -2063,6 +2128,56 @@ app.post("/filezilla_contas_listar", function(req, res){
 		sendRes(res, false, {"Msg": err.message});
     
     });
+
+});
+
+app.post("/filezilla_contas_criar", function(req, res){
+
+    log.info("-------------------------------------");
+    log.info("Funcao: filezilla_contas_criar");
+    log.info("Usuario: " + req.auth.user);
+    log.info(req.body);
+
+    console.log("-------------------------------------");
+    console.log("Funcao: filezilla_contas_criar");
+    console.log("Usuario: " + req.auth.user);
+
+    if( req.body.Conta != "" && req.body.Senha != "" && req.body.Diretorio != "" ) 
+	{
+
+        FilezillaCtrl.init(Cfg.Filezilla).then(function(){
+
+            var InfDad = { Senha: req.body.Senha, Diretorio: req.body.Diretorio, Permissoes: req.body.Permissoes };
+
+            FilezillaCtrl.contas_criar(req.body.Conta, InfDad).then(function(){
+        
+                log.info(">>> SUCESSO <<<")
+
+                sendRes(res, true);
+            
+            }).catch(function(err){
+        
+                log.warn(err.message);
+        
+                sendRes(res, false, {"Msg": err.message});
+        
+            });
+        
+        }).catch(function(err){
+        
+            log.warn(err.message);
+        
+            sendRes(res, false, {"Msg": err.message});
+        
+        });
+
+    }else{
+
+        log.warn("Existem campos nao preenchidos");
+
+        sendRes(res, false, {"Msg": "Existem campos nao preenchidos"});
+        
+    }
 
 });
 
@@ -2325,56 +2440,6 @@ app.post("/filezilla_contas_deletar", function(req, res){
         FilezillaCtrl.init(Cfg.Filezilla).then(function(){
 
             FilezillaCtrl.contas_deletar(req.body.Conta).then(function(){
-        
-                log.info(">>> SUCESSO <<<")
-
-                sendRes(res, true);
-            
-            }).catch(function(err){
-        
-                log.warn(err.message);
-        
-                sendRes(res, false, {"Msg": err.message});
-        
-            });
-        
-        }).catch(function(err){
-        
-            log.warn(err.message);
-        
-            sendRes(res, false, {"Msg": err.message});
-        
-        });
-
-    }else{
-
-        log.warn("Existem campos nao preenchidos");
-
-        sendRes(res, false, {"Msg": "Existem campos nao preenchidos"});
-        
-    }
-
-});
-
-app.post("/filezilla_contas_criar", function(req, res){
-
-    log.info("-------------------------------------");
-    log.info("Funcao: filezilla_contas_criar");
-    log.info("Usuario: " + req.auth.user);
-    log.info(req.body);
-
-    console.log("-------------------------------------");
-    console.log("Funcao: filezilla_contas_criar");
-    console.log("Usuario: " + req.auth.user);
-
-    if( req.body.Conta != "" && req.body.Senha != "" && req.body.Diretorio != "" ) 
-	{
-
-        FilezillaCtrl.init(Cfg.Filezilla).then(function(){
-
-            var InfDad = { Senha: req.body.Senha, Diretorio: req.body.Diretorio, Permissoes: req.body.Permissoes };
-
-            FilezillaCtrl.contas_criar(req.body.Conta, InfDad).then(function(){
         
                 log.info(">>> SUCESSO <<<")
 

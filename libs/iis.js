@@ -155,57 +155,757 @@ async function SitesRetDetalhes(Dominio)
 
             var parser = new xml2js.Parser();
 			
-            exec(Util_RetAppCmd() + " list site \"" + Dominio + "\" /config /xml", function(err, outxml){
-				
-				if(err)
-				{
-					
-					reject(err);
-					
-				}else{
-				
-					parser.parseString(outxml, function(err, result) {
-						
-						if(err)
-						{
-							
-							reject(err);
-							
-						}else{
-							
-							var RetFinal		= {
-							"Diretorio": 		""
-							};
-							
-							try {
-									
-								result.appcmd.SITE[0].site[0].application[0]["virtualDirectory"].forEach(function(TmpSep1){
+            exec(Util_RetAppCmd() + " list site \"" + Dominio + "\" /xml", function(err, outxml){
+            
+                parser.parseString(outxml, function(err, result) {
+                
+                    var RetFinal		= [];
 
-									if( TmpSep1["$"]["path"] == "/" )
-									{
-										
-										if( TmpSep1["$"]["physicalPath"] != "" )
-										{
-											
-											RetFinal["Diretorio"]		= TmpSep1["$"]["physicalPath"].trim();
-											
-										}
-										
-									}
-							
-								});
-							
-							} catch(err) {
-								
-							}
-							
-							resolve(RetFinal);
+                    if( result.appcmd.SITE )
+                    {
 
-						}
-						
-					});
-					
-				}
+                        Object.keys(result.appcmd.SITE).map(function(ObjRet, ObjIdx){
+                            
+                            var TmpReg			= {};
+                            TmpReg["Name"]		= result.appcmd.SITE[ObjIdx]["$"]["SITE.NAME"];
+                            TmpReg["ID"]		= result.appcmd.SITE[ObjIdx]["$"]["SITE.ID"];
+                            TmpReg["Bindings"]	= [];
+                            TmpReg["State"]		= result.appcmd.SITE[ObjIdx]["$"]["state"];
+                            
+                            var TmpSep          = result.appcmd.SITE[ObjIdx]["$"]["bindings"].split(",");
+
+                            TmpSep.forEach(function(TmpSep2){
+
+                                if( TmpSep2 != "" )
+                                {
+
+                                    TmpSep2         = TmpSep2.trim();
+                                    TmpSep2			= TmpSep2.split(":");
+
+                                    TmpReg["Bindings"].push({
+                                    "Prefixo": TmpSep2[0],
+                                    "Porta": TmpSep2[1],
+                                    "Dominio": TmpSep2[2],
+                                    });
+
+                                }
+                        
+                            });
+                            
+                            RetFinal.push(TmpReg);
+                            
+                        });
+                        
+                    }
+                    
+                    if( RetFinal.length == 0 )
+                    {
+
+                        reject("Dominio nao localizado");
+
+                    }else{
+
+                        resolve(RetFinal[0]);
+
+                    }
+                    
+                });
+
+            });
+
+        } catch(err) {
+            
+            reject(err);
+
+        }
+
+    });
+
+}
+
+async function SitesParar(Dominio)
+{
+
+    return new Promise((resolve, reject) => {
+
+        try {
+
+            var parser = new xml2js.Parser();
+			
+            exec(Util_RetAppCmd() + " stop site \"" + Dominio + "\" /xml", function(err, outxml){
+            
+                parser.parseString(outxml, function(err, result) {
+                    
+                    if(err)
+                    {
+                        
+                        reject(err);
+                        
+                    }else{
+                        
+                        try {
+
+                            var DadMensagem     = "";
+
+                            if( result.appcmd.ERROR )
+                            {
+
+                                try {
+
+                                    if( result.appcmd.ERROR[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.ERROR[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }else{
+
+                                try {
+
+                                    if( result.appcmd.STATUS[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.STATUS[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }
+                        
+                        } catch(err) {
+
+                            resolve(err);
+                            
+                        }
+
+                    }
+                    
+                });
+
+            });
+
+        } catch(err) {
+            
+            reject(err);
+
+        }
+
+    });
+
+}
+
+async function SitesIniciar(Dominio)
+{
+
+    return new Promise((resolve, reject) => {
+
+        try {
+
+            var parser = new xml2js.Parser();
+			
+            exec(Util_RetAppCmd() + " start site \"" + Dominio + "\" /xml", function(err, outxml){
+            
+                parser.parseString(outxml, function(err, result) {
+                    
+                    if(err)
+                    {
+                        
+                        reject(err);
+                        
+                    }else{
+                        
+                        try {
+
+                            var DadMensagem     = "";
+
+                            if( result.appcmd.ERROR )
+                            {
+
+                                try {
+
+                                    if( result.appcmd.ERROR[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.ERROR[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }else{
+
+                                try {
+
+                                    if( result.appcmd.STATUS[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.STATUS[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }
+                        
+                        } catch(err) {
+
+                            resolve(err);
+                            
+                        }
+
+                    }
+                    
+                });
+
+            });
+
+        } catch(err) {
+            
+            reject(err);
+
+        }
+
+    });
+
+}
+
+async function SitesCadastrar(Dominio)
+{
+
+    return new Promise((resolve, reject) => {
+
+        try {
+
+            var parser = new xml2js.Parser();
+			
+            exec(Util_RetAppCmd() + " add site /name:\"" + Dominio + "\" /physicalPath:\"" + Diretorio + "\" /bindings:http/*:80:" + Dominio + " /xml", function(err, outxml){
+            
+                parser.parseString(outxml, function(err, result) {
+                    
+                    if(err)
+                    {
+                        
+                        reject(err);
+                        
+                    }else{
+                        
+                        try {
+
+                            var DadMensagem     = "";
+
+                            if( result.appcmd.ERROR )
+                            {
+
+                                try {
+
+                                    if( result.appcmd.ERROR[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.ERROR[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }else{
+
+                                try {
+
+                                    if( result.appcmd.STATUS[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.STATUS[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }
+                        
+                        } catch(err) {
+
+                            resolve(err);
+                            
+                        }
+
+                    }
+                    
+                });
+
+            });
+
+        } catch(err) {
+            
+            reject(err);
+
+        }
+
+    });
+
+}
+
+async function PoolCadastrar(Dominio)
+{
+
+    return new Promise((resolve, reject) => {
+
+        try {
+
+            var parser = new xml2js.Parser();
+			
+            exec(Util_RetAppCmd() + " add apppool /name:\"" + Dominio + "\" /xml", function(err, outxml){
+            
+                parser.parseString(outxml, function(err, result) {
+                    
+                    if(err)
+                    {
+                        
+                        reject(err);
+                        
+                    }else{
+                        
+                        try {
+
+                            var DadMensagem     = "";
+
+                            if( result.appcmd.ERROR )
+                            {
+
+                                try {
+
+                                    if( result.appcmd.ERROR[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.ERROR[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }else{
+
+                                try {
+
+                                    if( result.appcmd.STATUS[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.STATUS[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }
+                        
+                        } catch(err) {
+
+                            resolve(err);
+                            
+                        }
+
+                    }
+                    
+                });
+
+            });
+
+        } catch(err) {
+            
+            reject(err);
+
+        }
+
+    });
+
+}
+
+async function PoolVincularEmSite(Dominio)
+{
+
+    return new Promise((resolve, reject) => {
+
+        try {
+
+            var parser = new xml2js.Parser();
+			
+            exec(Util_RetAppCmd() + " set site /site.name:\"" + Dominio + "\" /[path='/'].applicationPool:\"" + Dominio + "\" /xml", function(err, outxml){
+            
+                parser.parseString(outxml, function(err, result) {
+                    
+                    if(err)
+                    {
+                        
+                        reject(err);
+                        
+                    }else{
+                        
+                        try {
+
+                            var DadMensagem     = "";
+
+                            if( result.appcmd.ERROR )
+                            {
+
+                                try {
+
+                                    if( result.appcmd.ERROR[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.ERROR[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }else{
+
+                                try {
+
+                                    if( result.appcmd.STATUS[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.STATUS[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }
+                        
+                        } catch(err) {
+
+                            resolve(err);
+                            
+                        }
+
+                    }
+                    
+                });
+
+            });
+
+        } catch(err) {
+            
+            reject(err);
+
+        }
+
+    });
+
+}
+
+async function SitesBindingsCadastrar(Dominio, Protocolo, Porta, Valor)
+{
+
+    return new Promise((resolve, reject) => {
+
+        try {
+
+            var parser = new xml2js.Parser();
+			
+            exec(Util_RetAppCmd() + " set site /site.name:\"" + Dominio + "\" /+bindings.[protocol='" + Protocolo + "',bindingInformation='*:" + Porta + ":" + Valor + "'] /xml", function(err, outxml){
+            
+                parser.parseString(outxml, function(err, result) {
+                    
+                    if(err)
+                    {
+                        
+                        reject(err);
+                        
+                    }else{
+                        
+                        try {
+
+                            var DadMensagem     = "";
+
+                            if( result.appcmd.ERROR )
+                            {
+
+                                try {
+
+                                    if( result.appcmd.ERROR[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.ERROR[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }else{
+
+                                try {
+
+                                    if( result.appcmd.STATUS[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.STATUS[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }
+                        
+                        } catch(err) {
+
+                            resolve(err);
+                            
+                        }
+
+                    }
+                    
+                });
+
+            });
+
+        } catch(err) {
+            
+            reject(err);
+
+        }
+
+    });
+
+}
+
+async function SitesBindingsDeletar(Dominio, Protocolo, Porta, Valor)
+{
+
+    return new Promise((resolve, reject) => {
+
+        try {
+
+            var parser = new xml2js.Parser();
+			
+            exec(Util_RetAppCmd() + " set site /site.name:\"" + Dominio + "\" /-bindings.[protocol='" + Protocolo + "',bindingInformation='*:" + Porta + ":" + Valor + "'] /xml", function(err, outxml){
+            
+                parser.parseString(outxml, function(err, result) {
+                    
+                    if(err)
+                    {
+                        
+                        reject(err);
+                        
+                    }else{
+                        
+                        try {
+
+                            var DadMensagem     = "";
+
+                            if( result.appcmd.ERROR )
+                            {
+
+                                try {
+
+                                    if( result.appcmd.ERROR[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.ERROR[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }else{
+
+                                try {
+
+                                    if( result.appcmd.STATUS[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.STATUS[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }
+                        
+                        } catch(err) {
+
+                            resolve(err);
+                            
+                        }
+
+                    }
+                    
+                });
+
+            });
+
+        } catch(err) {
+            
+            reject(err);
+
+        }
+
+    });
+
+}
+
+async function SitesBackup(Nome)
+{
+
+    return new Promise((resolve, reject) => {
+
+        try {
+
+            var parser = new xml2js.Parser();
+			
+            exec(Util_RetAppCmd() + " add backup " + Nome + " /xml", function(err, outxml){
+            
+                parser.parseString(outxml, function(err, result) {
+                    
+                    if(err)
+                    {
+                        
+                        reject(err);
+                        
+                    }else{
+                        
+                        try {
+
+                            var DadMensagem     = "";
+
+                            if( result.appcmd.ERROR )
+                            {
+
+                                try {
+
+                                    if( result.appcmd.ERROR[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.ERROR[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }else{
+
+                                try {
+
+                                    if( result.appcmd.STATUS[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.STATUS[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }
+                        
+                        } catch(err) {
+
+                            resolve(err);
+                            
+                        }
+
+                    }
+                    
+                });
 
             });
 
@@ -284,4 +984,12 @@ async function SitesConfigSSL(Wacs, CodigoDominio, Dominio, Dominios, Email)
 module.exports.SitesListar = SitesListar;
 module.exports.SitesRetCodigo = SitesRetCodigo;
 module.exports.SitesRetDetalhes = SitesRetDetalhes;
+module.exports.SitesParar = SitesParar;
+module.exports.SitesIniciar = SitesIniciar;
+module.exports.SitesCadastrar = SitesCadastrar;
+module.exports.PoolCadastrar = PoolCadastrar;
+module.exports.PoolVincularEmSite = PoolVincularEmSite;
+module.exports.SitesBindingsCadastrar = SitesBindingsCadastrar;
+module.exports.SitesBindingsDeletar = SitesBindingsDeletar;
+module.exports.SitesBackup = SitesBackup;
 module.exports.SitesConfigSSL = SitesConfigSSL;

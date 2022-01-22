@@ -2075,6 +2075,18 @@ app.post("/iis_sites_cadastrar", function(req, res){
             (async function(){
 
                 try {
+            
+					fs.mkdir(req.body.diretorio, (err) => {
+						
+					});
+
+				} catch (error) {
+					
+					
+
+				}   
+                
+                try {
     
                     var RetEnv = await iis.SitesCadastrar(req.body.dominio, req.body.diretorio);
 

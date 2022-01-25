@@ -1331,7 +1331,7 @@ async function SitesPermissaoPasta(diretorio, usuario)
 				
 					});
 					
-					if( outxml.indexOf("sucess") !== -1 )
+					if( outxml.indexOf("sucesso") !== -1 || outxml.indexOf("Sucesso") !== -1 || outxml.indexOf("success") !== -1 || outxml.indexOf("Success") !== -1 )
 					{
 						
 						resolve(TmpRet);

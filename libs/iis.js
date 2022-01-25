@@ -1294,6 +1294,235 @@ async function SitesDefaultDocumentDeletar(Dominio, name)
 
 }
 
+async function SitesDiretoriosCarregar(Dominio)
+{
+
+    return new Promise((resolve, reject) => {
+
+        try {
+
+            var parser = new xml2js.Parser();
+			
+            exec(Util_RetAppCmd() + " list vdir /app.name:\"" + Dominio + "/\" /xml", function(err, outxml){
+            
+                parser.parseString(outxml, function(err, result) {
+                
+                    var RetFinal		= [];
+
+                    if( result.appcmd.VDIR )
+                    {
+						
+                        Object.keys(result.appcmd.VDIR).map(function(ObjRet, ObjIdx){
+                            
+                            var TmpReg			            = {};
+                            TmpReg["path"]		            = result.appcmd.VDIR[ObjIdx]["$"]["path"];
+                            TmpReg["physicalPath"]		    = result.appcmd.VDIR[ObjIdx]["$"]["physicalPath"];
+                            
+                            RetFinal.push(TmpReg);
+                            
+                        });
+                        
+                    }
+
+                    if( RetFinal.length == 0 )
+                    {
+
+                        reject("Registros nao Localizados");
+
+                    }else{
+
+                        resolve(RetFinal);
+
+                    }
+                    
+                });
+
+            });
+
+        } catch(err) {
+            
+            reject(err);
+
+        }
+
+    });
+
+}
+
+async function SitesDiretoriosCadastrar(Dominio, name, diretorio)
+{
+
+    return new Promise((resolve, reject) => {
+
+        try {
+
+            var parser = new xml2js.Parser();
+			
+            exec(Util_RetAppCmd() + " add vdir /app.name:\"" + Dominio + "/\" /path:/" + name + " /physicalPath:\"" + diretorio + "\" /xml", function(err, outxml){
+            
+                parser.parseString(outxml, function(err, result) {
+                    
+                    if(err)
+                    {
+                        
+                        reject(err);
+                        
+                    }else{
+                        
+                        try {
+
+                            var DadMensagem     = "";
+
+                            if( result.appcmd.ERROR )
+                            {
+
+                                try {
+
+                                    if( result.appcmd.ERROR[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.ERROR[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }else{
+
+                                try {
+
+                                    if( result.appcmd.STATUS[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.STATUS[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }
+                        
+                        } catch(err) {
+
+                            resolve(err);
+                            
+                        }
+
+                    }
+                    
+                });
+
+            });
+
+        } catch(err) {
+            
+            reject(err);
+
+        }
+
+    });
+
+}
+
+async function SitesDiretoriosDeletar(Dominio, name)
+{
+
+    return new Promise((resolve, reject) => {
+
+        try {
+
+            var parser = new xml2js.Parser();
+			
+            exec(Util_RetAppCmd() + " delete vdir /vdir.name:\"" + Dominio + "/" + name + "\" /xml", function(err, outxml){
+            
+                parser.parseString(outxml, function(err, result) {
+                    
+                    if(err)
+                    {
+                        
+                        reject(err);
+                        
+                    }else{
+                        
+                        try {
+
+                            var DadMensagem     = "";
+
+                            if( result.appcmd.ERROR )
+                            {
+
+                                try {
+
+                                    if( result.appcmd.ERROR[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.ERROR[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }else{
+
+                                try {
+
+                                    if( result.appcmd.STATUS[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.STATUS[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }
+                        
+                        } catch(err) {
+
+                            resolve(err);
+                            
+                        }
+
+                    }
+                    
+                });
+
+            });
+
+        } catch(err) {
+            
+            reject(err);
+
+        }
+
+    });
+
+}
+
 async function SitesPermissaoPasta(diretorio, usuario)
 {
 
@@ -1524,6 +1753,10 @@ module.exports.SitesHandlersDeletar = SitesHandlersDeletar;
 module.exports.SitesDefaultDocumentCarregar = SitesDefaultDocumentCarregar;
 module.exports.SitesDefaultDocumentCadastrar = SitesDefaultDocumentCadastrar;
 module.exports.SitesDefaultDocumentDeletar = SitesDefaultDocumentDeletar;
+
+module.exports.SitesDiretoriosCarregar = SitesDiretoriosCarregar;
+module.exports.SitesDiretoriosCadastrar = SitesDiretoriosCadastrar;
+module.exports.SitesDiretoriosDeletar = SitesDiretoriosDeletar;
 
 module.exports.SitesPermissaoPasta = SitesPermissaoPasta;
 

@@ -2805,6 +2805,231 @@ app.post("/iis_sites_defaultdocument_deletar", function(req, res){
 
 });
 
+app.post("/iis_sites_diretorios_carregar", function(req, res){
+
+	if( req.body.dominio != "" ) 
+	{
+		
+		log.info("-------------------------------------");
+		log.info("Funcao: iis_sites_diretorios_carregar");        
+		log.info("Usuario: " + req.auth.user);
+        log.info("dominio: " + req.body.dominio);
+		log.info(req.body);
+
+		console.log("-------------------------------------");
+		console.log("Funcao: iis_sites_diretorios_carregar");        
+		console.log("Usuario: " + req.auth.user);
+        console.log("dominio: " + req.body.dominio);
+		
+		start = process.hrtime(); 
+
+		try {
+
+			iis.SitesDiretoriosCarregar(req.body.dominio)
+			.then(Result => {
+				
+				var TempoDuracao = elapsed_time();
+
+				sendRes(res, true, {
+									"Duracao": TempoDuracao,
+									"Detalhes": Result
+									});
+									
+			})
+			.catch(error => {
+				
+				log.warn("Falha");
+				log.warn(error);
+			
+				if( error.message != undefined ){
+
+					sendRes(res, false, {"Msg": error.message});
+					
+				}else if( error != undefined ){
+
+					sendRes(res, false, {"Msg": error});
+
+				}else{
+
+					sendRes(res, false, {"Msg": "Falha em Executar Comando"});
+
+				}
+				
+			});
+
+		} catch (ex) {
+			
+			log.warn("Falha em Executar Comando");
+			log.warn(ex);
+		
+			console.log(ex);
+
+			sendRes(res, false, {"Msg": "Falha em Executar Comando"});
+		
+		}
+	
+	}else{
+
+        log.warn("Existem parametros pendentes");
+    
+		sendRes(res, false, {"Msg": "Existem parametros pendentes"});
+
+	}
+
+});
+
+app.post("/iis_sites_diretorios_cadastrar", function(req, res){
+
+	if( req.body.dominio != "" && req.body.name != "" && req.body.diretorio != "" ) 
+	{
+		
+		log.info("-------------------------------------");
+		log.info("Funcao: iis_sites_diretorios_cadastrar");        
+		log.info("Usuario: " + req.auth.user);
+        log.info("dominio: " + req.body.dominio);
+        log.info("name: " + req.body.name);
+        log.info("diretorio: " + req.body.diretorio);
+		log.info(req.body);
+
+		console.log("-------------------------------------");
+		console.log("Funcao: iis_sites_diretorios_cadastrar");        
+		console.log("Usuario: " + req.auth.user);
+        console.log("dominio: " + req.body.dominio);
+        console.log("name: " + req.body.name);
+        console.log("diretorio: " + req.body.diretorio);
+		
+		start = process.hrtime(); 
+
+		try {
+
+			iis.SitesDiretoriosCadastrar(req.body.dominio, req.body.name, req.body.diretorio)
+			.then(Result => {
+				
+				var TempoDuracao = elapsed_time();
+
+				sendRes(res, true, {
+									"Duracao": TempoDuracao,
+									"Detalhes": Result
+									});
+									
+			})
+			.catch(error => {
+				
+				log.warn("Falha");
+				log.warn(error);
+			
+				if( error.message != undefined ){
+
+					sendRes(res, false, {"Msg": error.message});
+					
+				}else if( error != undefined ){
+
+					sendRes(res, false, {"Msg": error});
+
+				}else{
+
+					sendRes(res, false, {"Msg": "Falha em Executar Comando"});
+
+				}
+				
+			});
+
+		} catch (ex) {
+			
+			log.warn("Falha em Executar Comando");
+			log.warn(ex);
+		
+			console.log(ex);
+
+			sendRes(res, false, {"Msg": "Falha em Executar Comando"});
+		
+		}
+	
+	}else{
+
+        log.warn("Existem parametros pendentes");
+    
+		sendRes(res, false, {"Msg": "Existem parametros pendentes"});
+
+	}
+
+});
+
+app.post("/iis_sites_diretorios_deletar", function(req, res){
+
+	if( req.body.dominio != "" && req.body.name != "" ) 
+	{
+		
+		log.info("-------------------------------------");
+		log.info("Funcao: iis_sites_diretorios_deletar");        
+		log.info("Usuario: " + req.auth.user);
+        log.info("dominio: " + req.body.dominio);
+        log.info("name: " + req.body.name);
+		log.info(req.body);
+
+		console.log("-------------------------------------");
+		console.log("Funcao: iis_sites_diretorios_deletar");        
+		console.log("Usuario: " + req.auth.user);
+        console.log("dominio: " + req.body.dominio);
+        console.log("name: " + req.body.name);
+		
+		start = process.hrtime(); 
+
+		try {
+
+			iis.SitesDiretoriosDeletar(req.body.dominio, req.body.name)
+			.then(Result => {
+				
+				var TempoDuracao = elapsed_time();
+
+				sendRes(res, true, {
+									"Duracao": TempoDuracao,
+									"Detalhes": Result
+									});
+									
+			})
+			.catch(error => {
+				
+				log.warn("Falha");
+				log.warn(error);
+			
+				if( error.message != undefined ){
+
+					sendRes(res, false, {"Msg": error.message});
+					
+				}else if( error != undefined ){
+
+					sendRes(res, false, {"Msg": error});
+
+				}else{
+
+					sendRes(res, false, {"Msg": "Falha em Executar Comando"});
+
+				}
+				
+			});
+
+		} catch (ex) {
+			
+			log.warn("Falha em Executar Comando");
+			log.warn(ex);
+		
+			console.log(ex);
+
+			sendRes(res, false, {"Msg": "Falha em Executar Comando"});
+		
+		}
+	
+	}else{
+
+        log.warn("Existem parametros pendentes");
+    
+		sendRes(res, false, {"Msg": "Existem parametros pendentes"});
+
+	}
+
+});
+
 app.post("/iis_backup", function(req, res){
 
 	if( req.body.nome != "" ) 

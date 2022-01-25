@@ -1294,6 +1294,68 @@ async function SitesDefaultDocumentDeletar(Dominio, name)
 
 }
 
+async function SitesPermissaoPasta(diretorio, usuario)
+{
+
+    return new Promise((resolve, reject) => {
+
+        try {
+
+            exec("icacls \"" + diretorio + "\" /grant " + usuario + ":(OI)(CI)F /T", function(err, outxml){
+            
+                if(err)
+				{
+					
+					reject(err);
+					
+				}else{
+					
+					var TmpSep          = outxml.split("\n");
+					var TmpRet          = [];
+
+					TmpSep.forEach(function(TmpSep2){
+
+						if( TmpSep2 != "" )
+						{
+
+							TmpSep2         = TmpSep2.trim();
+
+							if( TmpSep2 != "" )
+							{
+
+								TmpRet.push(TmpSep2);
+
+							}
+
+						}
+				
+					});
+					
+					if( outxml.indexOf("sucess") !== -1 )
+					{
+						
+						resolve(TmpRet);
+						
+					}else{
+						
+						reject(TmpRet);
+						
+					}
+					
+				}
+
+            });
+
+        } catch(err) {
+            
+            reject(err);
+
+        }
+
+    });
+
+}
+
 async function SitesBackup(Nome)
 {
 
@@ -1462,6 +1524,8 @@ module.exports.SitesHandlersDeletar = SitesHandlersDeletar;
 module.exports.SitesDefaultDocumentCarregar = SitesDefaultDocumentCarregar;
 module.exports.SitesDefaultDocumentCadastrar = SitesDefaultDocumentCadastrar;
 module.exports.SitesDefaultDocumentDeletar = SitesDefaultDocumentDeletar;
+
+module.exports.SitesPermissaoPasta = SitesPermissaoPasta;
 
 module.exports.SitesBackup = SitesBackup;
 module.exports.SitesConfigSSL = SitesConfigSSL;

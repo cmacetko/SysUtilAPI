@@ -2997,6 +2997,81 @@ app.post("/iis_config_ssl", function(req, res){
 
 });
 
+app.post("/iis_permissao_pasta", function(req, res){
+
+	if( req.body.diretorio != "" && req.body.usuario != "" ) 
+	{
+		
+		log.info("-------------------------------------");
+		log.info("Funcao: iis_backup");        
+		log.info("Usuario: " + req.auth.user);
+		log.info("diretorio: " + req.body.diretorio);
+		log.info("usuario: " + req.body.usuario);
+		log.info(req.body);
+
+		console.log("-------------------------------------");
+		console.log("Funcao: iis_backup");        
+		console.log("Usuario: " + req.auth.user);
+		console.log("diretorio: " + req.body.diretorio);
+		console.log("usuario: " + req.body.usuario);
+        
+		start = process.hrtime(); 
+
+		try {
+
+			iis.SitesPermissaoPasta(req.body.diretorio, req.body.usuario)
+			.then(Result => {
+				
+				var TempoDuracao = elapsed_time();
+
+				sendRes(res, true, {
+									"Duracao": TempoDuracao,
+									"Detalhes": Result
+									});
+									
+			})
+			.catch(error => {
+				
+				log.warn("Falha");
+				log.warn(error);
+			
+				if( error.message != undefined ){
+
+					sendRes(res, false, {"Msg": error.message});
+					
+				}else if( error != undefined ){
+
+					sendRes(res, false, {"Msg": error});
+
+				}else{
+
+					sendRes(res, false, {"Msg": "Falha em Executar Comando"});
+
+				}
+				
+			});
+
+		} catch (ex) {
+			
+			log.warn("Falha em Executar Comando");
+			log.warn(ex);
+		
+			console.log(ex);
+
+			sendRes(res, false, {"Msg": "Falha em Executar Comando"});
+		
+		}
+	
+	}else{
+
+        log.warn("Existem parametros pendentes");
+    
+		sendRes(res, false, {"Msg": "Existem parametros pendentes"});
+
+	}
+
+});
+
 app.post("/criar_diretorio", function(req, res){
 
     log.info("-------------------------------------");

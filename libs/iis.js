@@ -1094,7 +1094,7 @@ async function SitesDefaultDocumentCarregar(Dominio)
                         });
                         
                     }
-                    
+
                     if( RetFinal.length == 0 )
                     {
 
@@ -1102,7 +1102,7 @@ async function SitesDefaultDocumentCarregar(Dominio)
 
                     }else{
 
-                        resolve(RetFinal[0]);
+                        resolve(RetFinal);
 
                     }
                     

@@ -2048,7 +2048,7 @@ app.post("/iis_sites_iniciar", function(req, res){
 
 app.post("/iis_sites_cadastrar", function(req, res){
 
-	if( req.body.dominio != "" && req.body.diretorio != "" ) 
+	if( req.body.dominio != "" && req.body.diretorio != "" && req.body.usuario != "" ) 
 	{
 		
 		log.info("-------------------------------------");
@@ -2056,6 +2056,7 @@ app.post("/iis_sites_cadastrar", function(req, res){
 		log.info("Usuario: " + req.auth.user);
         log.info("dominio: " + req.body.dominio);
         log.info("diretorio: " + req.body.diretorio);
+        log.info("usuario: " + req.body.usuario);
 		log.info(req.body);
 
 		console.log("-------------------------------------");
@@ -2063,6 +2064,7 @@ app.post("/iis_sites_cadastrar", function(req, res){
 		console.log("Usuario: " + req.auth.user);
         console.log("dominio: " + req.body.dominio);
         console.log("diretorio: " + req.body.diretorio);
+        console.log("usuario: " + req.body.usuario);
 		
 		start = process.hrtime(); 
 
@@ -2076,7 +2078,7 @@ app.post("/iis_sites_cadastrar", function(req, res){
 
                 try {
             
-					fs.mkdir(req.body.diretorio, (err) => {
+					fs.mkdir(req.body.diretorio, { recursive: true }, (err) => {
 						
 					});
 
@@ -2085,6 +2087,18 @@ app.post("/iis_sites_cadastrar", function(req, res){
 					
 
 				}   
+                
+                try {
+    
+                    var RetEnv = await iis.SitesPermissaoPasta(req.body.diretorio, req.body.usuario)
+
+                    RetFinal["Mensagens"].push("[Sucesso] SitesPermissaoPasta: " + RetEnv);
+    
+                } catch (ex) {
+                    
+                    RetFinal["Erros"].push("[Erro] SitesPermissaoPasta: " + ex);
+                
+                }
                 
                 try {
     

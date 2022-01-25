@@ -832,6 +832,468 @@ async function SitesBindingsDeletar(Dominio, Protocolo, Porta, Valor)
 
 }
 
+async function SitesHandlersCarregar(Dominio)
+{
+
+    return new Promise((resolve, reject) => {
+
+        try {
+
+            var parser = new xml2js.Parser();
+			
+            exec(Util_RetAppCmd() + " list config \"" + Dominio + "\" -section:system.webServer/handlers /xml", function(err, outxml){
+            
+                parser.parseString(outxml, function(err, result) {
+                
+                    var RetFinal		= [];
+
+                    if( result.appcmd.CONFIG )
+                    {
+
+                        Object.keys(result.appcmd.CONFIG[0]["system.webServer-handlers"][0]["add"]).map(function(ObjRet, ObjIdx){
+                            
+                            var TmpReg			            = {};
+                            TmpReg["name"]		            = result.appcmd.CONFIG[0]["system.webServer-handlers"][0]["add"][ObjIdx]["$"]["name"];
+                            TmpReg["path"]		            = result.appcmd.CONFIG[0]["system.webServer-handlers"][0]["add"][ObjIdx]["$"]["path"];
+                            TmpReg["verb"]		            = result.appcmd.CONFIG[0]["system.webServer-handlers"][0]["add"][ObjIdx]["$"]["verb"];
+                            TmpReg["modules"]		        = result.appcmd.CONFIG[0]["system.webServer-handlers"][0]["add"][ObjIdx]["$"]["modules"];
+                            TmpReg["scriptProcessor"]		= result.appcmd.CONFIG[0]["system.webServer-handlers"][0]["add"][ObjIdx]["$"]["scriptProcessor"];
+                            TmpReg["resourceType"]		    = result.appcmd.CONFIG[0]["system.webServer-handlers"][0]["add"][ObjIdx]["$"]["resourceType"];
+                            TmpReg["requireAccess"]		    = result.appcmd.CONFIG[0]["system.webServer-handlers"][0]["add"][ObjIdx]["$"]["requireAccess"];
+                            
+                            RetFinal.push(TmpReg);
+                            
+                        });
+                        
+                    }
+                    
+                    if( RetFinal.length == 0 )
+                    {
+
+                        reject("Registros nao Localizados");
+
+                    }else{
+
+                        resolve(RetFinal);
+
+                    }
+                    
+                });
+
+            });
+
+        } catch(err) {
+            
+            reject(err);
+
+        }
+
+    });
+
+}
+
+async function SitesHandlersCadastrar(Dominio, name, path, verb, modules, scriptProcessor, resourceType)
+{
+
+    return new Promise((resolve, reject) => {
+
+        try {
+
+            var parser = new xml2js.Parser();
+			
+            exec(Util_RetAppCmd() + " set config \"" + Dominio + "\" -section:system.webServer/handlers /+\"[name='" + name + "',path='" + path + "',verb='" + verb + "',modules='" + modules + "',scriptProcessor='" + scriptProcessor + "',resourceType='" + resourceType + "']\" /xml", function(err, outxml){
+            
+                parser.parseString(outxml, function(err, result) {
+                    
+                    if(err)
+                    {
+                        
+                        reject(err);
+                        
+                    }else{
+                        
+                        try {
+
+                            var DadMensagem     = "";
+
+                            if( result.appcmd.ERROR )
+                            {
+
+                                try {
+
+                                    if( result.appcmd.ERROR[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.ERROR[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }else{
+
+                                try {
+
+                                    if( result.appcmd.STATUS[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.STATUS[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }
+                        
+                        } catch(err) {
+
+                            resolve(err);
+                            
+                        }
+
+                    }
+                    
+                });
+
+            });
+
+        } catch(err) {
+            
+            reject(err);
+
+        }
+
+    });
+
+}
+
+async function SitesHandlersDeletar(Dominio, name, path, verb, modules, scriptProcessor, resourceType)
+{
+
+    return new Promise((resolve, reject) => {
+
+        try {
+
+            var parser = new xml2js.Parser();
+			
+            exec(Util_RetAppCmd() + " set config \"" + Dominio + "\" -section:system.webServer/handlers /-\"[name='" + name + "',path='" + path + "',verb='" + verb + "',modules='" + modules + "',scriptProcessor='" + scriptProcessor + "',resourceType='" + resourceType + "']\" /xml", function(err, outxml){
+            
+                parser.parseString(outxml, function(err, result) {
+                    
+                    if(err)
+                    {
+                        
+                        reject(err);
+                        
+                    }else{
+                        
+                        try {
+
+                            var DadMensagem     = "";
+
+                            if( result.appcmd.ERROR )
+                            {
+
+                                try {
+
+                                    if( result.appcmd.ERROR[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.ERROR[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }else{
+
+                                try {
+
+                                    if( result.appcmd.STATUS[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.STATUS[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }
+                        
+                        } catch(err) {
+
+                            resolve(err);
+                            
+                        }
+
+                    }
+                    
+                });
+
+            });
+
+        } catch(err) {
+            
+            reject(err);
+
+        }
+
+    });
+
+}
+
+async function SitesDefaultDocumentCarregar(Dominio)
+{
+
+    return new Promise((resolve, reject) => {
+
+        try {
+
+            var parser = new xml2js.Parser();
+			
+            exec(Util_RetAppCmd() + " list config \"" + Dominio + "\" /section:defaultDocument /xml", function(err, outxml){
+            
+                parser.parseString(outxml, function(err, result) {
+                
+                    var RetFinal		= [];
+
+                    if( result.appcmd.CONFIG )
+                    {
+						
+                        Object.keys(result.appcmd.CONFIG[0]["system.webServer-defaultDocument"][0]["files"][0]["add"]).map(function(ObjRet, ObjIdx){
+                            
+                            var TmpReg			            = {};
+                            TmpReg["value"]		            = result.appcmd.CONFIG[0]["system.webServer-defaultDocument"][0]["files"][0]["add"][ObjIdx]["$"]["value"];
+                            
+                            RetFinal.push(TmpReg);
+                            
+                        });
+                        
+                    }
+                    
+                    if( RetFinal.length == 0 )
+                    {
+
+                        reject("Registros nao Localizados");
+
+                    }else{
+
+                        resolve(RetFinal[0]);
+
+                    }
+                    
+                });
+
+            });
+
+        } catch(err) {
+            
+            reject(err);
+
+        }
+
+    });
+
+}
+
+async function SitesDefaultDocumentCadastrar(Dominio, name)
+{
+
+    return new Promise((resolve, reject) => {
+
+        try {
+
+            var parser = new xml2js.Parser();
+			
+            exec(Util_RetAppCmd() + " set config \"" + Dominio + "\" /section:defaultDocument /enabled:true /+files.[value='" + name + "'] /xml", function(err, outxml){
+            
+                parser.parseString(outxml, function(err, result) {
+                    
+                    if(err)
+                    {
+                        
+                        reject(err);
+                        
+                    }else{
+                        
+                        try {
+
+                            var DadMensagem     = "";
+
+                            if( result.appcmd.ERROR )
+                            {
+
+                                try {
+
+                                    if( result.appcmd.ERROR[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.ERROR[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }else{
+
+                                try {
+
+                                    if( result.appcmd.STATUS[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.STATUS[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }
+                        
+                        } catch(err) {
+
+                            resolve(err);
+                            
+                        }
+
+                    }
+                    
+                });
+
+            });
+
+        } catch(err) {
+            
+            reject(err);
+
+        }
+
+    });
+
+}
+
+async function SitesDefaultDocumentDeletar(Dominio, name)
+{
+
+    return new Promise((resolve, reject) => {
+
+        try {
+
+            var parser = new xml2js.Parser();
+			
+            exec(Util_RetAppCmd() + " set config \"" + Dominio + "\" /section:defaultDocument /enabled:true /-files.[value='" + name + "'] /xml", function(err, outxml){
+            
+                parser.parseString(outxml, function(err, result) {
+                    
+                    if(err)
+                    {
+                        
+                        reject(err);
+                        
+                    }else{
+                        
+                        try {
+
+                            var DadMensagem     = "";
+
+                            if( result.appcmd.ERROR )
+                            {
+
+                                try {
+
+                                    if( result.appcmd.ERROR[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.ERROR[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }else{
+
+                                try {
+
+                                    if( result.appcmd.STATUS[0]["$"]["message"] )
+                                    {
+    
+                                        var DadMensagem     = result.appcmd.STATUS[0]["$"]["message"];
+    
+                                    }
+                                
+                                } catch(err) {
+    
+                                    //
+                                    
+                                }
+
+                                resolve(DadMensagem);
+
+                            }
+                        
+                        } catch(err) {
+
+                            resolve(err);
+                            
+                        }
+
+                    }
+                    
+                });
+
+            });
+
+        } catch(err) {
+            
+            reject(err);
+
+        }
+
+    });
+
+}
+
 async function SitesBackup(Nome)
 {
 
@@ -989,7 +1451,17 @@ module.exports.SitesIniciar = SitesIniciar;
 module.exports.SitesCadastrar = SitesCadastrar;
 module.exports.PoolCadastrar = PoolCadastrar;
 module.exports.PoolVincularEmSite = PoolVincularEmSite;
+
 module.exports.SitesBindingsCadastrar = SitesBindingsCadastrar;
 module.exports.SitesBindingsDeletar = SitesBindingsDeletar;
+
+module.exports.SitesHandlersCarregar = SitesHandlersCarregar;
+module.exports.SitesHandlersCadastrar = SitesHandlersCadastrar;
+module.exports.SitesHandlersDeletar = SitesHandlersDeletar;
+
+module.exports.SitesDefaultDocumentCarregar = SitesDefaultDocumentCarregar;
+module.exports.SitesDefaultDocumentCadastrar = SitesDefaultDocumentCadastrar;
+module.exports.SitesDefaultDocumentDeletar = SitesDefaultDocumentDeletar;
+
 module.exports.SitesBackup = SitesBackup;
 module.exports.SitesConfigSSL = SitesConfigSSL;

@@ -397,7 +397,7 @@ async function SitesIniciar(Dominio)
 
 }
 
-async function SitesCadastrar(Dominio)
+async function SitesCadastrar(Dominio, Diretorio)
 {
 
     return new Promise((resolve, reject) => {

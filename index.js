@@ -29,6 +29,7 @@ var drivelist = require('@syndicats/drivelist');
 var checkDiskSpace = require('check-disk-space')
 var sslChecker = require('ssl-checker')
 var FilezillaCtrl = require('ctrlfilezillaserver');
+var wkhtmltox = require("wkhtmltox");
 
 var express = require("express");
 var bodyParser = require("body-parser");
@@ -227,6 +228,132 @@ app.post("/url_to_pdf", function(req, res){
                         sendRes(res, true, {"Nome": filename, "Tamanho": stats.size, "Tamanho2": filesize(stats.size, {round: 0}), "Pdf": data.toString(), "Duracao": TempoDuracao});
 
                     }
+
+                });
+			
+			}
+
+		}).pipe(writeStream);
+
+	}else{
+
+        log.warn("Url nao informada");
+    
+		sendRes(res, false, {"Msg": "Url nao informada"});
+
+	}
+
+});
+
+app.post("/url_to_jpg", function(req, res){
+
+    if(req.body.url) 
+	{
+
+        log.info("-------------------------------------");
+        log.info("Funcao: url_to_jpg");
+        log.info("Usuario: " + req.auth.user);
+        log.info("Link: " + req.body.url);
+        log.info(req.body);
+
+        console.log("-------------------------------------");
+        console.log("Funcao: url_to_jpg");
+        console.log("Usuario: " + req.auth.user);
+        console.log("Link: " + req.body.url);
+    
+        start = process.hrtime(); 
+
+		var fileuuid = uuid();
+        var filename = fileuuid + ".pdf";
+        var filename2 = fileuuid + ".jpg";
+        var filename2B = fileuuid + "-0.jpg";
+		var output = __dirname + "/tmp/" + filename;
+        var writeStream = fs.createWriteStream(output);
+
+		wkhtmltopdf(req.body.url, req.body.options, function(code, signal) {
+
+            log.info("wkhtmltopdf | code: " + code);
+            log.info("wkhtmltopdf | signal: " + signal);
+
+			if( code != null )
+			{
+            
+                log.error("wkhtmltopdf | error");
+                
+                remover_arquivo(output);
+				sendRes(res, false, {"Msg": "Falha Gerada pelo wkhtmltopdf"});
+				
+			}else{
+
+                log.info("wkhtmltopdf | Sucesso");
+
+                var PDFImage = require("cmacetko-pdf-to-image").PDFImage;
+                    
+                var pdfImage = new PDFImage(output, {
+                    outputDirectory: __dirname +  "/output/",
+                    convertExtension: "jpg",
+                    QtdPaginas: req.body.QtdPaginas || 0,
+					combinedImage: true,
+                    convertOptions: {
+                    "-density": "150",
+                    "-quality": "85",
+                    "-background": "White",
+                    "-alpha": "remove",
+                    "-colorspace": "rgb"
+                    }
+                });
+
+                pdfImage.convertFile().then(function(imagePath) {
+                
+                    log.info(">>> SUCESSO <<<")
+                    log.info(imagePath);
+				
+					var stats = fs.statSync(imagePath);
+
+					fs.readFile(imagePath, {encoding: 'base64'}, function (err, data) {
+
+						if(err) 
+						{
+							
+							log.error("readFile | error");
+							log.error(err);
+
+							remover_arquivo(output);
+							remover_arquivo(imagePath);
+							remover_arquivo(__dirname +  "/output/" + filename2B);
+							sendRes(res, false, {"Msg": "Falha em ler Raw"});
+
+						}else{
+
+							var TempoDuracao = elapsed_time();
+
+							remover_arquivo(output);
+							remover_arquivo(imagePath);
+							remover_arquivo(__dirname +  "/output/" + filename2B);
+
+							log.info(">>> SUCESSO <<<")
+							log.info("filename: " + filename2)
+							log.info("Tamanho: " + stats.size)
+							log.info("Tamanho2: " + filesize(stats.size, {round: 0}))
+							log.info("Duracao: " + TempoDuracao)
+
+							console.log("Tamanho: " + stats.size)
+							console.log("Tamanho2: " + filesize(stats.size, {round: 0}))
+							console.log("Duracao: " + TempoDuracao);
+
+							sendRes(res, true, {"Nome": filename2, "Tamanho": stats.size, "Tamanho2": filesize(stats.size, {round: 0}), "Arquivo": data.toString(), "Duracao": TempoDuracao});
+
+						}
+
+					});
+
+                }, function (err) {
+                
+                    log.warn("Falha no convertFile");
+                    log.warn(err);
+    
+                    remover_arquivo(output);
+                    sendRes(res, false, {"Msg": "Falha em Convert PDF"});
 
                 });
 			
